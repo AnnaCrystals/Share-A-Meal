@@ -16,6 +16,14 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
+
+console.log('Database Configuration:');
+console.log('Host:', pool.config.host);
+console.log('User:', pool.config.user);
+console.log('Database:', pool.config.database);
+console.log('Port:', pool.config.port);
+console.log('Password:', pool.config.password);
+
 pool.on('connection', function (connection) {
   logger.info(
     `Connected to db '${connection.config.database}' on ${connection.config.host}`
