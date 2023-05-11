@@ -35,7 +35,6 @@ describe('TC-20x user', () => {
                 .request(server)
                 .post('/api/user')
                 .send({
-                    id: 17,
                     firstName: "Astolfo",
                     lastName: "Rider",
                     street: "road",
@@ -51,8 +50,7 @@ describe('TC-20x user', () => {
                     res.body.should.has.property('status', 201);
                     res.body.should.has.property('message');
                     res.body.should.has.property('data').to.not.be.empty;
-                    let { id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
-                    id.should.be.equal(17);
+                    let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
                     firstName.should.be.a('string').to.be.equal("Astolfo");
                     lastName.should.be.a('string').to.be.equal("Rider");
                     street.should.be.a('string').to.be.equal("road");

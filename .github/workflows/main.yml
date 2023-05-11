@@ -3,7 +3,7 @@ name: Testing and deployment
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   integrationtests:
@@ -76,4 +76,4 @@ jobs:
         run: railway up
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          
+

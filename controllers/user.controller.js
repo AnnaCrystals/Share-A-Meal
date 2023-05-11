@@ -35,9 +35,8 @@ const userController = {
     },
 
     createUser: function (req, res, next) {
-        const { id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = req.body;
+        const { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = req.body;
         try {
-            //assert(typeof id === 'integer', 'id must be a integer');
             assert(typeof firstName === 'string', 'firstName must be a string');
             assert(typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'string', 'street must be a string');
@@ -57,8 +56,8 @@ const userController = {
                 }
 
                 if (conn) {
-                    const query = 'INSERT INTO user (id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-                    conn.query(query, [id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber], function (err, results, fields) {
+                    const query = 'INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+                    conn.query(query, [firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber], function (err, results, fields) {
                         if (err) {
                             console.log("Error: Failed to execute insert query", err);
                             next({
