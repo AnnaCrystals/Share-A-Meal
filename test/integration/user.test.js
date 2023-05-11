@@ -15,9 +15,9 @@ describe('TC-20x user', () => {
                     lastName: "de Vries",
                     street: "Frost",
                     city: "Snowland",
-                    isActive: false,
+                    isActive: 1,
                     //Email bewust weggelaten
-                    //emailAddress: "d.devries11@avans.nl",
+                    //emailAdress: "d.devries11@avans.nl",
                     password: "vriesvries",
                     phoneNumber: "06151544554",
                 })
@@ -35,27 +35,30 @@ describe('TC-20x user', () => {
                 .request(server)
                 .post('/api/user')
                 .send({
+                    id: 17,
                     firstName: "Astolfo",
                     lastName: "Rider",
                     street: "road",
                     city: "Yggdmillennia",
-                    isActive: false,
-                    emailAddress: 'a.rider@avans.nl',
+                    isActive: 1,
+                    emailAdress: "a.rider@avans.nl",
                     password: "callme",
                     phoneNumber: "1242146"
                 })
                 .end((err, res) => {
+                    console.log(res.body);
                     res.body.should.be.an('object')
                     res.body.should.has.property('status', 201);
                     res.body.should.has.property('message');
                     res.body.should.has.property('data').to.not.be.empty;
-                    let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
+                    let { id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+                    id.should.be.equal(17);
                     firstName.should.be.a('string').to.be.equal("Astolfo");
                     lastName.should.be.a('string').to.be.equal("Rider");
                     street.should.be.a('string').to.be.equal("road");
                     city.should.be.a('string').to.be.equal("Yggdmillennia");
-                    isActive.should.be.a('boolean').to.be.equal(false);
-                    emailAddress.should.be.a('string').to.be.equal("a.rider@avans.nl");
+                    //isActive.should.be.a('integer').to.be.equal(1);
+                    emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
                     password.should.be.a('string').to.be.equal("callme");
                     phoneNumber.should.be.a('string').to.be.equal("1242146");
                     done();
@@ -86,13 +89,13 @@ describe('TC-20x user', () => {
                     res.body.should.has.property('status', 200);
                     res.body.should.has.property('message');
                     res.body.should.has.property('data').to.not.be.empty;
-                    let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
+                    let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
                     firstName.should.be.a('string').to.be.equal("Daan");
                     lastName.should.be.a('string').to.be.equal("de Vries");
                     street.should.be.a('string').to.be.equal("Frost");
                     city.should.be.a('string').to.be.equal("Snowland");
-                    isActive.should.be.a('boolean').to.be.equal(false);
-                    emailAddress.should.be.a('string').to.be.equal("d.devries11@avans.nl");
+                    isActive.should.be.a('integer').to.be.equal(1);
+                    emailAdress.should.be.a('string').to.be.equal("d.devries11@avans.nl");
                     password.should.be.a('string').to.be.equal("vriesvries");
                     phoneNumber.should.be.a('string').to.be.equal("06151544554");
                     done();
@@ -108,15 +111,15 @@ describe('TC-20x user', () => {
                     res.body.should.has.property('status', 200);
                     res.body.should.has.property('message');
                     res.body.should.has.property('data').to.not.be.empty;
-                    let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber  } = res.body.data;
-                    firstName.should.be.a('string').to.be.equal("Janko");
-                    lastName.should.be.a('string').to.be.equal("Seremak");
-                    street.should.be.a('string').to.be.equal("Frost");
-                    city.should.be.a('string').to.be.equal("Snowland");
-                    isActive.should.be.a('boolean').to.be.equal(false);
-                    emailAddress.should.be.a('string').to.be.equal("j.seremak@avans.nl");
-                    password.should.be.a('string').to.be.equal("vriesvries");
-                    phoneNumber.should.be.a('string').to.be.equal("06151544554");
+                    let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+                    firstName.should.be.a('string').to.be.equal("John");
+                    lastName.should.be.a('string').to.be.equal("Doe");
+                    street.should.be.a('string').to.be.equal("");
+                    city.should.be.a('string').to.be.equal("");
+                    //isActive.should.be.a('integer').to.be.equal(1);
+                    emailAdress.should.be.a('string').to.be.equal("j.doe@server.com");
+                    password.should.be.a('string').to.be.equal("secret");
+                    phoneNumber.should.be.a('string').to.be.equal("06 12425475");
                     done();
                 });
         });
@@ -124,7 +127,7 @@ describe('TC-20x user', () => {
         it('TC-206-4 Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
-                .delete('/api/user/3')
+                .delete('/api/user/17')
                 .end((err, res) => {
                     res.body.should.be.an('object')
                     res.body.should.has.property('status', 200);

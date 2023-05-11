@@ -22,6 +22,8 @@ const pool = mysql.createPool({
     //password: process.env.DB_PASSWORD || '',
 });
 
+
+//Misschien weghalen
 pool.getConnection(function (err, conn) {
     // Do something with the connection
     if (err) {
@@ -31,8 +33,8 @@ pool.getConnection(function (err, conn) {
         conn.query(
             'SELECT `id`, `name` FROM `meal`',
             function (err, results, fields) {
-                console.log('errors: ', err)
-                console.log('results: ', results); // results contains rows returned by server
+                //console.log('errors: ', err)
+                //console.log('results: ', results); // results contains rows returned by server
             }
         );
         pool.releaseConnection(conn);
