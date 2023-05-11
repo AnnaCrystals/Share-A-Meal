@@ -20,7 +20,7 @@ const pool = mysql.createPool({
     idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
     queueLimit: 0,
     port: process.env.DB_PORT || 3306,
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD || 'root',
 });
 
 
