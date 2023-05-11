@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
+      - name: Set permissions for mocha 
+        run: chmod 0777 ./node_modules/.bin/mocha
+        
       - name: Start MySQL connection from host
         run: |
           sudo /etc/init.d/mysql start
@@ -42,7 +45,6 @@ jobs:
 
       - name: npm test
         run: |
-          npm i -g mocha
           npm test -- --DB_PASSWORD {{env.MYSQL_ROOT_PASSWORD}} --DB_USER root --DB_NAME ${{env.DB_DATABASE}}
 
   #   Heroku-deploy:
@@ -59,7 +61,7 @@ jobs:
   #           heroku_email: ${{secrets.HEROKU_USER_EMAIL}}
 
   Railway-deploy:
-    # needs: integrationtests
+    needs: integrationtests
     runs-on: ubuntu-latest
     environment:
       name: Railway # naam van mijn environment op GitHub
