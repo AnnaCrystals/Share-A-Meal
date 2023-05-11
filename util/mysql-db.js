@@ -5,7 +5,8 @@ require('dotenv').config();
 console.log('DB_HOST:', process.env.DB_HOST);
 console.log('DB_USER:', process.env.DB_USER);
 console.log('DB_DATABASE:', process.env.DB_DATABASE);
-
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
 
 // create the connection to database
 const pool = mysql.createPool({
@@ -18,27 +19,11 @@ const pool = mysql.createPool({
     maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
     idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
     queueLimit: 0,
-    //port: process.env.DB_PORT, //|| 3306,
-    //password: process.env.DB_PASSWORD || '',
+    port: process.env.DB_PORT || 3306,
+    password: process.env.DB_PASSWORD || '',
 });
 
 
-//Misschien weghalen
-pool.getConnection(function (err, conn) {
-    // Do something with the connection
-    if (err) {
-        console.log("Error");
-    }
-    if (conn) {
-        conn.query(
-            'SELECT `id`, `name` FROM `meal`',
-            function (err, results, fields) {
-                //console.log('errors: ', err)
-                //console.log('results: ', results); // results contains rows returned by server
-            }
-        );
-        pool.releaseConnection(conn);
-    }
-});
+
 
 module.exports = pool;
