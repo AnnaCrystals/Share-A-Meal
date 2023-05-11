@@ -67,6 +67,27 @@ describe('TC-20x user', () => {
         });
     });
 
+    it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
+      chai
+        .request(server)
+        .post('/api/user')
+        .send({
+          firstName: 'Another',
+          lastName: 'User',
+          street: '',
+          city: '',
+          isActive: 1,
+          emailAdress: 'j.doe2@server.com',
+          password: 'password',
+          phoneNumber: '06 98765432'
+        })
+        .end((err, res) => {
+          res.body.should.has.property('status').to.be.equal(403);
+          res.body.should.has.property('message');
+          res.body.should.has.property('data').to.be.empty;
+          done();
+        });
+    });
 
     let registeredUserId; // Variable to store the registered user ID
     it('TC-201-5 Gebruiker succesvol geregistreerd', (done) => {
@@ -142,6 +163,18 @@ describe('TC-20x user', () => {
         });
     });
 
+    it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
+      chai.request(server)
+        .get('/api/user/9999999')
+        .end((err, res) => {
+          res.body.should.have.status(404)
+          res.body.should.has.property('status').that.equals(404)
+          res.body.should.has.property('data').to.be.empty;
+          res.body.should.has.property('message').that.equals('User met ID 9999999 niet gevonden')
+          done();
+        });
+    });
+
     it('TC-204-3 Gebruiker-ID bestaat', (done) => {
       chai
         .request(server)
@@ -160,6 +193,87 @@ describe('TC-20x user', () => {
           emailAdress.should.be.a('string').to.be.equal("j.doe@server.com");
           password.should.be.a('string').to.be.equal("secret");
           phoneNumber.should.be.a('string').to.be.equal("06 12425475");
+          done();
+        });
+    });
+
+    it('TC-205-1 Verplicht veld “emailAddress” ontbreekt', (done) => {
+      chai
+        .request(server)
+        .post('/api/user')
+        .send({
+          firstName: "Daan",
+          lastName: "de Vries",
+          street: "Frost",
+          city: "Snowland",
+          isActive: 1,
+          //Email bewust weggelaten
+          //emailAdress: "d.devries11@avans.nl",
+          password: "vriesvries",
+          phoneNumber: "06151544554",
+        })
+        .end((err, res) => {
+          res.body.should.be.an('object');
+          res.body.should.have.status(400)
+          res.body.should.has.property('message')
+          res.body.should.has.property('data').to.be.empty;
+          done();
+        });
+    });
+
+    it('TC-205-4 Gebruiker bestaat niet', (done) => {
+      chai.request(server)
+        .delete('/api/user/99999999999')
+        .end((err, res) => {
+          res.body.should.have.status(404)
+          res.body.should.has.property('data').to.be.empty;
+          done();
+        });
+    });
+
+    it.skip('TC-205-6 Gebruiker succesvol gewijzigd', function (done) {
+      const updatedUser = {
+        firstName: "Daan",
+        lastName: "de Vries",
+        street: "",
+        city: "",
+        isActive: 1,  
+        emailAdress: "d.devries11@avans.nl",
+        password: "vriesvries",
+        phoneNumber: "06151544554",
+       
+      };
+
+      chai
+        .request(server)
+        .put('/api/user/4')
+        .send(updatedUser)
+        .end((err, res) => {
+          res.body.should.be.an('object');
+          res.body.should.have.status(200)
+          res.body.should.have.property('message');
+
+          const { firstName, lastName, street, city, isActive, emailAddress, phoneNumber } = res.body.data;
+          firstName.should.be.a('string').to.be.equal(updatedUser.firstName);
+          lastName.should.be.a('string').to.be.equal(updatedUser.lastName);
+          street.should.be.a('string').to.be.equal(updatedUser.street);
+          city.should.be.a('string').to.be.equal(updatedUser.city);
+          isActive.should.be.a('boolean').to.be.equal(updatedUser.isActive);
+          emailAddress.should.be.a('string').to.be.equal(updatedUser.emailAddress);
+          phoneNumber.should.be.a('string').to.be.equal(updatedUser.phoneNumber);
+
+          done();
+        });
+    });
+
+    it('TC-206-1 Gebruiker bestaat niet', (done) => {
+      chai.request(server)
+        .delete('/api/user/99999999999999')
+        .end((err, res) => {
+          res.body.should.have.status(404)
+          res.body.should.has.property('status').that.equals(404)
+          res.body.should.has.property('data').to.be.empty;
+          res.body.should.has.property('message').that.equals('User met ID 99999999999999 niet gevonden')
           done();
         });
     });
