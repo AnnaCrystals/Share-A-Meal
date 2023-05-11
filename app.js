@@ -5,8 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 //var indexRouter = require('../controllers/index');
-var userRouter = require('../Share-A-Meal/routes/user.routes.js');
-var infoRouter = require('../Share-A-Meal/routes/info.routes.js');
+var userRouter = require('../Share-A-Meal/routes/user.routes');
+var infoRouter = require('../Share-A-Meal/routes/info.routes');
 
 var app = express();
 
