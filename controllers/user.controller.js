@@ -111,7 +111,7 @@ const userController = {
                 }
 
                 if (conn) {
-                    pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
+                    pool.query('SELECT * FROM user WHERE id = 1', (err, results) => {
                         if (err) {
                             console.log("Error retrieving user profile");
                             next({
