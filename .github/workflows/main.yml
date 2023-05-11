@@ -3,7 +3,8 @@ name: Testing and deployment
 on:
   push:
     branches:
-      - master
+      - main
+      
 
 jobs:
   integrationtests:
@@ -23,9 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
-      - name: Set permissions for mocha 
-        run: chmod 0777 ./node_modules/.bin/mocha
-        
       - name: Start MySQL connection from host
         run: |
           sudo /etc/init.d/mysql start
@@ -79,4 +77,3 @@ jobs:
         run: railway up
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
