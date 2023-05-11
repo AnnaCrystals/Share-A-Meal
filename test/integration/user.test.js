@@ -35,6 +35,7 @@ describe('TC-20x user', () => {
                 .request(server)
                 .post('/api/user')
                 .send({
+                    id: 999,
                     firstName: "Astolfo",
                     lastName: "Rider",
                     street: "road",
@@ -51,11 +52,12 @@ describe('TC-20x user', () => {
                     res.body.should.has.property('message');
                     res.body.should.has.property('data').to.not.be.empty;
                     let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+                    id.should.be.a('integer').to.be.equal(999);
                     firstName.should.be.a('string').to.be.equal("Astolfo");
                     lastName.should.be.a('string').to.be.equal("Rider");
                     street.should.be.a('string').to.be.equal("road");
                     city.should.be.a('string').to.be.equal("Yggdmillennia");
-                    //isActive.should.be.a('integer').to.be.equal(1);
+                    isActive.should.be.a('integer').to.be.equal(1);
                     emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
                     password.should.be.a('string').to.be.equal("callme");
                     phoneNumber.should.be.a('string').to.be.equal("1242146");
@@ -125,7 +127,7 @@ describe('TC-20x user', () => {
         it('TC-206-4 Gebruiker succesvol verwijderd', (done) => {
             chai
                 .request(server)
-                .delete('/api/user/17')
+                .delete('/api/user/999')
                 .end((err, res) => {
                     res.body.should.be.an('object')
                     res.body.should.has.property('status', 200);

@@ -9,9 +9,9 @@ console.log('DB_DATABASE:', process.env.DB_DATABASE);
 
 // create the connection to database
 const pool = mysql.createPool({
-    host: process.env.DB_HOST, //|| 'localhost',
-    user: process.env.DB_USER, //|| 'root',
-    database: process.env.DB_DATABASE, //|| 'shareameal',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    database: process.env.DB_DATABASE || 'shareameal',
     waitForConnections: true,
     connectionLimit: 10,
     multipleStatements: true,

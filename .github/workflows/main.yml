@@ -23,6 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
+      - name: Set permissions for mocha 
+        run: chmod 0777 ./node_modules/.bin/mocha
+        
       - name: Start MySQL connection from host
         run: |
           sudo /etc/init.d/mysql start
