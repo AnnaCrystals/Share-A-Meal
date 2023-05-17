@@ -1,7 +1,14 @@
+// get the client
 const mysql = require('mysql2');
-const logger = require('../util/utils').logger;
+require('dotenv').config();
 
-// Create the connection pool. The pool-specific settings are the defaults
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_DATABASE:', process.env.DB_DATABASE);
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+
+// create the connection to database
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -14,28 +21,6 @@ const pool = mysql.createPool({
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
   queueLimit: 0
-});
-
-
-console.log('Database Configuration:');
-console.log('Host:', pool.config.host);
-console.log('User:', pool.config.user);
-console.log('Database:', pool.config.database);
-console.log('Port:', pool.config.port);
-console.log('Password:', pool.config.password);
-
-pool.on('connection', function (connection) {
-  logger.info(
-    `Connected to db '${connection.config.database}' on ${connection.config.host}`
-  );
-});
-
-pool.on('acquire', function (connection) {
-  logger.trace('Connection %d acquired', connection.threadId);
-});
-
-pool.on('release', function (connection) {
-  logger.trace('Connection %d released', connection.threadId);
 });
 
 module.exports = pool;

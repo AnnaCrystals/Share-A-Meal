@@ -8,8 +8,8 @@ const userController = {
             status: 200,
             message: 'Server info-endpoint',
             data: {
-                studentName: 'Daan de Vries',
-                studentNumber: 2205132,
+                studentName: 'Davide',
+                studentNumber: 1234567,
                 description: 'Welkom bij de server van API van de Share A Meal'
             }
         });

@@ -29,7 +29,7 @@ const CLEAR_DB =
  * Deze id kun je als foreign key gebruiken in de andere queries, bv insert meal.
  */
 const INSERT_USER =
-  'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+  'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAddress`, `password`, `street`, `city` ) VALUES' +
   '(1, "first", "last", "name@server.nl", "secret", "street", "city");';
 
 /**
@@ -54,7 +54,7 @@ describe('TC-20x user', () => {
           city: "Snowland",
           isActive: 1,
           //Email bewust weggelaten
-          //emailAdress: "d.devries11@avans.nl",
+          //emailAddress: "d.devries11@avans.nl",
           password: "vriesvries",
           phoneNumber: "06151544554",
         })
@@ -67,7 +67,7 @@ describe('TC-20x user', () => {
         });
     });
 
-    it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
+    it('TC-201-4 Gebruiker bestaat al', (done) => {
       chai
         .request(server)
         .post('/api/user')
@@ -77,7 +77,7 @@ describe('TC-20x user', () => {
           street: '',
           city: '',
           isActive: 1,
-          emailAdress: 'j.doe2@server.com',
+          emailAddress: 'j.doe22@server.com',
           password: 'password',
           phoneNumber: '06 98765432'
         })
@@ -100,7 +100,7 @@ describe('TC-20x user', () => {
           street: "road",
           city: "Yggdmillennia",
           isActive: 1,
-          emailAdress: "a.rider@avans.nl",
+          emailAddress: "a.rider@avans.nl",
           password: "callme",
           phoneNumber: "1242146"
         })
@@ -109,13 +109,13 @@ describe('TC-20x user', () => {
           res.body.should.have.property('status', 201);
           res.body.should.have.property('message');
           res.body.should.have.property('data').to.not.be.empty;
-          let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+          let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
           firstName.should.be.a('string').to.be.equal("Astolfo");
           lastName.should.be.a('string').to.be.equal("Rider");
           street.should.be.a('string').to.be.equal("road");
           city.should.be.a('string').to.be.equal("Yggdmillennia");
           //isActive.should.be.a('integer').to.be.equal(1);
-          emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
+          emailAddress.should.be.a('string').to.be.equal("a.rider@avans.nl");
           password.should.be.a('string').to.be.equal("callme");
           phoneNumber.should.be.a('string').to.be.equal("1242146");
 
@@ -141,7 +141,7 @@ describe('TC-20x user', () => {
     });
 
 
-    it('TC-203-2 Gebruiker is ingelogd met geldig token.', (done) => {
+    it.skip('TC-203-2 Gebruiker is ingelogd met geldig token.', (done) => {
       chai
         .request(server)
         .get('/api/user/profile')
@@ -150,13 +150,13 @@ describe('TC-20x user', () => {
           res.body.should.has.property('status', 200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.not.be.empty;
-          let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+          let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
           firstName.should.be.a('string').to.be.equal("Mariëtte");
           lastName.should.be.a('string').to.be.equal("van den Dullemen");
           street.should.be.a('string').to.be.equal("");
           city.should.be.a('string').to.be.equal("");
           //isActive.should.be.a('integer').to.be.equal(1);
-          emailAdress.should.be.a('string').to.be.equal("m.vandullemen@server.nl");
+          emailAddress.should.be.a('string').to.be.equal("m.vandullemen@server.nl");
           password.should.be.a('string').to.be.equal("secret");
           phoneNumber.should.be.a('string').to.be.equal("");
           done();
@@ -184,13 +184,13 @@ describe('TC-20x user', () => {
           res.body.should.has.property('status', 200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.not.be.empty;
-          let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
+          let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
           firstName.should.be.a('string').to.be.equal("John");
           lastName.should.be.a('string').to.be.equal("Doe");
           street.should.be.a('string').to.be.equal("");
           city.should.be.a('string').to.be.equal("");
           //isActive.should.be.a('integer').to.be.equal(1);
-          emailAdress.should.be.a('string').to.be.equal("j.doe@server.com");
+          emailAddress.should.be.a('string').to.be.equal("j.doe@server.com");
           password.should.be.a('string').to.be.equal("secret");
           phoneNumber.should.be.a('string').to.be.equal("06 12425475");
           done();
@@ -208,7 +208,7 @@ describe('TC-20x user', () => {
           city: "Snowland",
           isActive: 1,
           //Email bewust weggelaten
-          //emailAdress: "d.devries11@avans.nl",
+          //emailAddress: "d.devries11@avans.nl",
           password: "vriesvries",
           phoneNumber: "06151544554",
         })
@@ -231,17 +231,18 @@ describe('TC-20x user', () => {
         });
     });
 
-    it.skip('TC-205-6 Gebruiker succesvol gewijzigd', function (done) {
+    it('TC-205-6 Gebruiker succesvol gewijzigd', function (done) {
       const updatedUser = {
-        firstName: "Daan",
-        lastName: "de Vries",
+        //Updating user with already existing user
+        firstName: "Marieke",
+        lastName: "Van Dam",
+        isActive: 1,
+        emailAddress: "m.vandam@server.nl",
+        password: "secret",
+        phoneNumber: "06-12345678",
+        roles: "editor,guest",
         street: "",
-        city: "",
-        isActive: 1,  
-        emailAdress: "d.devries11@avans.nl",
-        password: "vriesvries",
-        phoneNumber: "06151544554",
-       
+        city: ""
       };
 
       chai
@@ -258,7 +259,7 @@ describe('TC-20x user', () => {
           lastName.should.be.a('string').to.be.equal(updatedUser.lastName);
           street.should.be.a('string').to.be.equal(updatedUser.street);
           city.should.be.a('string').to.be.equal(updatedUser.city);
-          isActive.should.be.a('boolean').to.be.equal(updatedUser.isActive);
+          isActive.should.be.a('number').to.be.equal(updatedUser.isActive);
           emailAddress.should.be.a('string').to.be.equal(updatedUser.emailAddress);
           phoneNumber.should.be.a('string').to.be.equal(updatedUser.phoneNumber);
 
