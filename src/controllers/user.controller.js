@@ -42,8 +42,9 @@ const userController = {
         try {
             assert(typeof firstName === 'string', 'firstName must be a string');
             assert(typeof lastName === 'string', 'lastName must be a string');
-            // assert(typeof street === 'string', 'street must be a string');
-            // assert(typeof city === 'string', 'city must be a string');
+            assert(typeof street === 'string', 'street must be a string');
+            assert(typeof city === 'string', 'city must be a string');
+            //assert(typeof isActive === 'integer', 'isActive must be a integer');
             assert(typeof emailAddress === 'string', 'emailAddress must be a string');
             assert(typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'string', 'phoneNumber must be a string');
@@ -268,7 +269,7 @@ const userController = {
             assert(typeof lastName === 'undefined' || typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'undefined' || typeof street === 'string', 'street must be a string');
             assert(typeof city === 'undefined' || typeof city === 'string', 'city must be a string');
-            assert(typeof isActive === 'undefined' || typeof isActive === 'number', 'isActive must be a number');
+            //assert(typeof isActive === 'undefined' || typeof isActive === 'integer', 'isActive must be a integer');
             assert(typeof emailAddress === 'undefined' || typeof emailAddress === 'string', 'emailAddress must be a string');
             assert(typeof password === 'undefined' || typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'undefined' || typeof phoneNumber === 'string', 'phoneNumber must be a string');

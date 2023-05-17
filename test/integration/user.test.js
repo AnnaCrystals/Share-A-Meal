@@ -72,14 +72,14 @@ describe('TC-20x user', () => {
         .request(server)
         .post('/api/user')
         .send({
-          firstName: 'Another',
-          lastName: 'User',
+          firstName: 'Marieke',
+          lastName: 'Van Dam',
           street: '',
           city: '',
-          isActive: 1,
-          emailAddress: 'j.doe22@server.com',
-          password: 'password',
-          phoneNumber: '06 98765432'
+          isActive: 0,
+          emailAddress: 'm.vandam@server.nl',
+          password: 'secret',
+          phoneNumber: '06-12345678'
         })
         .end((err, res) => {
           res.body.should.has.property('status').to.be.equal(403);
