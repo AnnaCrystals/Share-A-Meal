@@ -7,34 +7,31 @@ const jwt = require('jsonwebtoken');
 
 const userController = {
     getUsers: function (req, res, next) {
-
+        console.log("Executing getUsers function");
         pool.getConnection(function (err, conn) {
-            // Do something with the connection
-
             if (err) {
                 console.log("Error");
+                // Handle the error appropriately
             }
             if (conn) {
-                conn.query(
-                    'SELECT * FROM user',
-                    function (err, results, fields) {
-                        if (err) {
-                            next({
-                                code: 409,
-                                message: err.message
-                            });
-                        }
+                conn.query('SELECT * FROM user', function (err, results, fields) {
+                    if (err) {
+                        next({
+                            status: 409,
+                            message: err.message
+                        });
+                    } else {
                         res.status(200).json({
                             status: 200,
                             message: 'User GetAll endpoint',
-                            data: results,
-                        })
+                            data: results
+                        });
                     }
-                );
-                pool.releaseConnection(conn);
+                    // Release the connection back to the pool
+                    conn.release();
+                });
             }
         });
-
     },
 
     createUser: function (req, res, next) {
@@ -53,7 +50,7 @@ const userController = {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
                     next({
-                        code: 500,
+                        status: 500,
                         message: "Internal Server Error"
                     });
                 }
@@ -77,7 +74,7 @@ const userController = {
                             } else {
                                 console.log("Error: Failed to execute insert query", err);
                                 next({
-                                    code: 500,
+                                    status: 500,
                                     message: "Internal Server Error"
                                 });
                             }
@@ -114,94 +111,36 @@ const userController = {
         }
     },
 
-    //Deze misschien aanpassen met wat op github staat en id veranderen
-    // getUserProfile: function (req, res, next) {
-    //     const userId = req.params.userId;
-    //     try {
-    //         pool.getConnection(function (err, conn) {
-    //             if (err) {
-    //                 console.log("Error: Failed to establish a database connection");
-    //                 next({
-    //                     code: 500,
-    //                     message: "Internal Server Error"
-    //                 });
-    //             }
-
-    //             if (conn) {
-    //                 pool.query('SELECT * FROM user WHERE id = 1', (err, results) => {
-    //                     if (err) {
-    //                         console.log("Error retrieving user profile");
-    //                         next({
-    //                             code: 500,
-    //                             message: "Internal Server Error"
-    //                         });
-    //                     }
-    //                     else if (results.length === 0) {
-    //                         console.log("User not found");
-    //                         next({
-    //                             code: 404,
-    //                             message: "User not found"
-    //                         });
-    //                     }
-    //                     else {
-    //                         const user = results[0];
-
-    //                         res.status(200).json({
-    //                             status: 200,
-    //                             message: "Profiel van user succesvol opgevraagd",
-    //                             data: {
-    //                                 id: user.id,
-    //                                 firstName: user.firstName,
-    //                                 lastName: user.lastName,
-    //                                 street: user.street,
-    //                                 city: user.city,
-    //                                 isActive: user.isActive,
-    //                                 emailAdress: user.emailAdress,
-    //                                 password: user.password,
-    //                                 phoneNumber: user.phoneNumber
-    //                             }
-    //                         });
-    //                     } pool.releaseConnection(conn);
-    //                 });
-    //             }
-    //         });
-    //     } catch (err) {
-    //         res.status(400).json({
-    //             status: 400,
-    //             message: err.toString(),
-    //             data: {},
-    //         })
-    //     }
-    // },
-
     getUserProfile: function (req, res, next) {
-        //req.userId = 1;
+        const userId = req.userId
+        console.log("UserID: " + req.userId)
         logger.trace('Get user profile for user', req.userId);
 
         let sqlStatement = 'SELECT * FROM `user` WHERE id=?';
 
+        console.log('UserID:', userId);
         pool.getConnection(function (err, conn) {
             // Do something with the connection
             if (err) {
                 logger.error(err.code, err.syscall, err.address, err.port);
                 next({
-                    code: 500,
+                    status: 500,
                     message: err.code
                 });
             }
             if (conn) {
-                conn.query(sqlStatement, [req.userId], (err, results, fields) => {
+                conn.query(sqlStatement, [userId], (err, results, fields) => {
                     if (err) {
                         logger.error(err.message);
                         next({
-                            code: 409,
+                            status: 409,
                             message: err.message
                         });
                     }
                     if (results) {
                         logger.trace('Found', results.length, 'results');
                         res.status(200).json({
-                            code: 200,
+                            status: 200,
                             message: 'Get User profile',
                             data: results[0]
                         });
@@ -220,7 +159,7 @@ const userController = {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
                     next({
-                        code: 500,
+                        status: 500,
                         message: "Internal Server Error"
                     });
                 }
@@ -230,7 +169,7 @@ const userController = {
                         if (err) {
                             console.log("Error retrieving user");
                             next({
-                                code: 500,
+                                status: 500,
                                 message: "Internal Server Error"
                             });
                         } else if (results.length === 0) {
@@ -263,6 +202,15 @@ const userController = {
 
     userUpdate: function (req, res, next) {
         const { userId } = req.params;
+
+        if (userId != req.userId) {
+            res.status(403).json({
+                status: 403,
+                message: "User is not the owner of this data",
+                data: {}
+            })
+        }
+
         const { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = req.body;
         try {
             assert(typeof firstName === 'undefined' || typeof firstName === 'string', 'firstName must be a string');
@@ -277,21 +225,32 @@ const userController = {
             pool.getConnection(function (err, conn) {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
-                    next({
-                        code: 500,
-                        message: "Internal Server Error"
-                    });
+                    console.log(err);
+                    // next({
+                    //     status: 500,
+                    //     message: "Internal Server Error"
+                    // });
+                    res.status(500).json({
+                        status: 500,
+                        message: "Jouw message",
+                        data: { error: err }
+                    })
                 }
 
                 if (conn) {
                     pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
                         if (err) {
                             console.log("Error retrieving user");
-                            next({
-                                code: 500,
-                                message: "Internal Server Error"
-                            });
-                        } else if (results.length === 0) {
+                            // next({
+                            //     status: 500,
+                            //     message: "Internal Server Error"
+                            // });
+                            res.status(500).json({
+                                status: 500,
+                                message: "Jouw message",
+                                data: { error: err }
+                            })
+                        } else if (results.affectedRows === 0) {
                             console.log("User not found");
                             res.status(404).json({
                                 status: 404,
@@ -314,7 +273,7 @@ const userController = {
                                 if (err) {
                                     console.log("Error updating user:", err);
                                     next({
-                                        code: 500,
+                                        status: 500,
                                         message: "Internal Server Error"
                                     });
                                 } else {
@@ -342,12 +301,21 @@ const userController = {
 
     userDelete: function (req, res, next) {
         const { userId } = req.params;
+
+        if (userId != req.userId) {
+            res.status(403).json({
+                status: 403,
+                message: "User is not the owner of this data",
+                data: {}
+            })
+        }
+
         try {
             pool.getConnection(function (err, conn) {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
                     next({
-                        code: 500,
+                        status: 500,
                         message: "Can't connect"
                     });
                 }
@@ -356,7 +324,7 @@ const userController = {
                         if (err) {
                             console.log("Error retrieving user", err);
                             next({
-                                code: 500,
+                                status: 500,
                                 message: "Can't query select"
                             });
                         } else if (results.length === 0) {
@@ -371,7 +339,7 @@ const userController = {
                                 if (err) {
                                     console.log("Error deleting user", err);
                                     next({
-                                        code: 500,
+                                        status: 500,
                                         message: "Can't query delete"
                                     });
                                 } else {

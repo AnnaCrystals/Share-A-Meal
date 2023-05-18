@@ -47,6 +47,7 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .post('/api/user')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 1}, jwtSecretKey))
         .send({
           firstName: "Daan",
           lastName: "de Vries",
@@ -59,6 +60,7 @@ describe('TC-20x user', () => {
           phoneNumber: "06151544554",
         })
         .end((err, res) => {
+          console.log('Response body 201-1:', res.body);
           res.body.should.be.an('object');
           res.body.should.has.property('status').to.be.equal(400);
           res.body.should.has.property('message');
@@ -66,7 +68,6 @@ describe('TC-20x user', () => {
           done();
         });
     });
-
     it('TC-201-4 Gebruiker bestaat al', (done) => {
       chai
         .request(server)
@@ -82,6 +83,7 @@ describe('TC-20x user', () => {
           phoneNumber: '06-12345678'
         })
         .end((err, res) => {
+          console.log('Response body 201-4:', res.body);
           res.body.should.has.property('status').to.be.equal(403);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.be.empty;
@@ -105,8 +107,9 @@ describe('TC-20x user', () => {
           phoneNumber: "1242146"
         })
         .end((err, res) => {
+          console.log('Response body 201-5:', res.body);
           res.body.should.be.an('object')
-          res.body.should.have.property('status', 201);
+          res.body.should.has.property('status').to.be.equal(201);
           res.body.should.have.property('message');
           res.body.should.have.property('data').to.not.be.empty;
           let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
@@ -130,9 +133,12 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .get('/api/user')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 1}, jwtSecretKey))
         .end((err, res) => {
+          console.log('Response body 202-1:', res.body);
           res.body.should.be.an('object')
-          res.body.should.has.property('status', 200);
+          //Misschien res.body.status weghalen
+          res.body.should.has.property('status').to.be.equal(200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.not.be.empty;
           res.body.should.has.property('data').that.is.an('array').with.length.gte(2);
@@ -145,9 +151,11 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .get('/api/user/profile')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 1}, jwtSecretKey))
         .end((err, res) => {
+          console.log('Response body 203-2:', res.body);
           res.body.should.be.an('object')
-          res.body.should.has.property('status', 200);
+          res.body.should.has.property('status').to.be.equal(200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.not.be.empty;
           let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
@@ -166,9 +174,11 @@ describe('TC-20x user', () => {
     it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
       chai.request(server)
         .get('/api/user/9999999')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 1}, jwtSecretKey))
         .end((err, res) => {
+          console.log('Response body 204-2:', res.body);
           res.body.should.have.status(404)
-          res.body.should.has.property('status').that.equals(404)
+          res.body.should.has.property('status').to.be.equal(404);
           res.body.should.has.property('data').to.be.empty;
           res.body.should.has.property('message').that.equals('User met ID 9999999 niet gevonden')
           done();
@@ -179,9 +189,11 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .get('/api/user/2')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 1}, jwtSecretKey))
         .end((err, res) => {
+          console.log('Response body 204-3:', res.body);
           res.body.should.be.an('object')
-          res.body.should.has.property('status', 200);
+          res.body.should.has.property('status').to.be.equal(200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.not.be.empty;
           let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
@@ -213,8 +225,9 @@ describe('TC-20x user', () => {
           phoneNumber: "06151544554",
         })
         .end((err, res) => {
+          console.log('Response body 205-1:', res.body);
           res.body.should.be.an('object');
-          res.body.should.have.status(400)
+          res.body.should.has.property('status').to.be.equal(400);
           res.body.should.has.property('message')
           res.body.should.has.property('data').to.be.empty;
           done();
@@ -224,8 +237,10 @@ describe('TC-20x user', () => {
     it('TC-205-4 Gebruiker bestaat niet', (done) => {
       chai.request(server)
         .delete('/api/user/99999999999')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 99999999999}, jwtSecretKey))
         .end((err, res) => {
-          res.body.should.have.status(404)
+          console.log('Response body 205-4:', res.body);
+          res.body.should.has.property('status').to.be.equal(404);
           res.body.should.has.property('data').to.be.empty;
           done();
         });
@@ -248,10 +263,12 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .put('/api/user/4')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 4}, jwtSecretKey))
         .send(updatedUser)
         .end((err, res) => {
+          console.log('Response body 205-6:', res.body);
           res.body.should.be.an('object');
-          res.body.should.have.status(200)
+          res.body.should.has.property('status').to.be.equal(200);
           res.body.should.have.property('message');
 
           const { firstName, lastName, street, city, isActive, emailAddress, phoneNumber } = res.body.data;
@@ -270,9 +287,10 @@ describe('TC-20x user', () => {
     it('TC-206-1 Gebruiker bestaat niet', (done) => {
       chai.request(server)
         .delete('/api/user/99999999999999')
+        .set('Authorization', `Bearer` + jwt.sign({userId : 99999999999}, jwtSecretKey))
         .end((err, res) => {
-          res.body.should.have.status(404)
-          res.body.should.has.property('status').that.equals(404)
+          console.log('Response body 206-1:', res.body);
+          res.body.should.has.property('status').to.be.equal(404);
           res.body.should.has.property('data').to.be.empty;
           res.body.should.has.property('message').that.equals('User met ID 99999999999999 niet gevonden')
           done();
@@ -283,9 +301,11 @@ describe('TC-20x user', () => {
       chai
         .request(server)
         .delete(`/api/user/${registeredUserId}`)
+        .set('Authorization', `Bearer` + jwt.sign({userId : registeredUserId}, jwtSecretKey))
         .end((err, res) => {
+          console.log('Response body 206-4:', res.body);
           res.body.should.be.an('object');
-          res.body.should.has.property('status', 200);
+          res.body.should.has.property('status').to.be.equal(200);
           res.body.should.has.property('message');
           res.body.should.has.property('data').to.be.empty;
           done();
