@@ -30,7 +30,7 @@ const CLEAR_DB =
  * Deze id kun je als foreign key gebruiken in de andere queries, bv insert meal.
  */
 const INSERT_USER =
-  'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAddress`, `password`, `street`, `city` ) VALUES' +
+  'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
   '(1, "first", "last", "name@server.nl", "secret", "street", "city");';
 
 /**
@@ -56,7 +56,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
         lastName: "de Vries",
         street: "Frost",
         city: "Snowland",
-        //emailAddress: "",
+        //emailAdress: "",
         password: "1Vriesvries",
         phoneNumber: "06151544554",
       })
@@ -81,7 +81,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
         lastName: "Valide",
         street: "",
         city: "",
-        emailAddress: "invalidemail",
+        emailAdress: "invalidemail",
         password: "1Nietvalideemail",
         phoneNumber: "",
       })
@@ -104,7 +104,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
         street: "",
         city: "",
         isActive: 1,
-        emailAddress: "john.doe@example.com",
+        emailAdress: "john.doe@example.com",
         password: "nietvalide",
         phoneNumber: "",
       })
@@ -129,7 +129,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
         street: '',
         city: '',
         isActive: 0,
-        emailAddress: 'm.vandam@avans.nl',
+        emailAdress: 'm.vandam@avans.nl',
         password: '1Vandammarieke',
         phoneNumber: '06-12345678'
       })
@@ -153,7 +153,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
         street: "road",
         city: "Yggdmillennia",
         isActive: 1,
-        emailAddress: "a.rider@avans.nl",
+        emailAdress: "a.rider@avans.nl",
         password: "Astolforider12",
         phoneNumber: "1242146"
       })
@@ -163,13 +163,13 @@ describe('TC-201 Registreren als nieuwe user', () => {
         res.body.should.has.property('status').to.be.equal(201);
         res.body.should.have.property('message');
         res.body.should.have.property('data').to.not.be.empty;
-        let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
+        let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("Astolfo");
         lastName.should.be.a('string').to.be.equal("Rider");
         street.should.be.a('string').to.be.equal("road");
         city.should.be.a('string').to.be.equal("Yggdmillennia");
         //isActive.should.be.a('integer').to.be.equal(1);
-        emailAddress.should.be.a('string').to.be.equal("a.rider@avans.nl");
+        emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
         password.should.be.a('string').to.be.equal("Astolforider12");
         phoneNumber.should.be.a('string').to.be.equal("1242146");
 
@@ -184,7 +184,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
     chai
       .request(server)
       .post("/api/login")
-      .send({ emailAddress: "a.rider@avans.nl", password: "Astolforider12" })
+      .send({ emailAdress: "a.rider@avans.nl", password: "Astolforider12" })
       .end((loginErr, loginRes) => {
         token = loginRes.body.data.token;
         logger.info(`Token created: ${token}`);
@@ -296,13 +296,13 @@ describe('TC-203 Opvragen van gebruikersprofiel', () => {
         res.body.should.has.property('status').to.be.equal(200);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.not.be.empty;
-        let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
+        let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("Astolfo");
         lastName.should.be.a('string').to.be.equal("Rider");
         street.should.be.a('string').to.be.equal("road");
         city.should.be.a('string').to.be.equal("Yggdmillennia");
         //isActive.should.be.a('integer').to.be.equal(1);
-        emailAddress.should.be.a('string').to.be.equal("a.rider@avans.nl");
+        emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
         password.should.be.a('string').to.be.equal("Astolforider12");
         phoneNumber.should.be.a('string').to.be.equal("1242146");
         done();
@@ -348,13 +348,13 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
         res.body.should.has.property('status').to.be.equal(200);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.not.be.empty;
-        let { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = res.body.data;
+        let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("John");
         lastName.should.be.a('string').to.be.equal("Doe");
         street.should.be.a('string').to.be.equal("");
         city.should.be.a('string').to.be.equal("");
         //isActive.should.be.a('integer').to.be.equal(1);
-        emailAddress.should.be.a('string').to.be.equal("j.doe@server.com");
+        emailAdress.should.be.a('string').to.be.equal("j.doe@server.com");
         password.should.be.a('string').to.be.equal("secret");
         phoneNumber.should.be.a('string').to.be.equal("06 12425475");
         done();
@@ -363,7 +363,7 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
 });
 
 describe('TC-205 Updaten van usergegevens', () => {
-  it('TC-205-1 Verplicht veld “emailAddress” ontbreekt', (done) => {
+  it('TC-205-1 Verplicht veld “emailAdress” ontbreekt', (done) => {
     chai
       .request(server)
       .post('/api/user')
@@ -374,7 +374,7 @@ describe('TC-205 Updaten van usergegevens', () => {
         city: "Snowland",
         isActive: 1,
         //Email bewust weggelaten
-        //emailAddress: "d.devries11@avans.nl",
+        //emailAdress: "d.devries11@avans.nl",
         password: "Vriesvries2003",
         phoneNumber: "06151544554",
       })
@@ -450,7 +450,7 @@ describe('TC-205 Updaten van usergegevens', () => {
       firstName: "Mariek",
       lastName: "Van D",
       isActive: 1,
-      emailAddress: "a.rider@avans.nl",
+      emailAdress: "a.rider@avans.nl",
       password: "Marieke12345",
       phoneNumber: "06-12345678",
       roles: "editor,guest",
@@ -469,13 +469,13 @@ describe('TC-205 Updaten van usergegevens', () => {
         res.body.should.has.property('status').to.be.equal(200);
         res.body.should.have.property('message');
 
-        const { firstName, lastName, street, city, isActive, emailAddress, phoneNumber } = res.body.data;
+        const { firstName, lastName, street, city, isActive, emailAdress, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal(updatedUser.firstName);
         lastName.should.be.a('string').to.be.equal(updatedUser.lastName);
         street.should.be.a('string').to.be.equal(updatedUser.street);
         city.should.be.a('string').to.be.equal(updatedUser.city);
         isActive.should.be.a('number').to.be.equal(updatedUser.isActive);
-        emailAddress.should.be.a('string').to.be.equal(updatedUser.emailAddress);
+        emailAdress.should.be.a('string').to.be.equal(updatedUser.emailAdress);
         phoneNumber.should.be.a('string').to.be.equal(updatedUser.phoneNumber);
 
         done();

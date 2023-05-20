@@ -9,8 +9,8 @@ const { logger, jwtSecretKey } = require('../util/utils');
 module.exports = {
     login(req, res, next) {
         console.log(req.body);
-        const { emailAddress, password } = req.body;
-        if (!emailAddress || !password) {
+        const { emailAdress, password } = req.body;
+        if (!emailAdress || !password) {
             next({
                 code: 404,
                 message: 'Verplicht veld ontbreekt',
@@ -29,8 +29,8 @@ module.exports = {
 
             if (conn) {
                 conn.query(
-                    'SELECT * FROM user WHERE emailAddress = ?',
-                    [emailAddress],
+                    'SELECT * FROM user WHERE emailAdress = ?',
+                    [emailAdress],
                     function (err, results, fields) {
                         if (err) {
                             next({
@@ -67,13 +67,13 @@ module.exports = {
                             } else {
                                 next({
                                     code: 400,
-                                    message: 'Email address and password do not match',
+                                    message: 'Email adress and password do not match',
                                 });
                             }
                         } else {
                             next({
                                 code: 404,
-                                message: `User with emailAddress ${emailAddress} cannot be found`,
+                                message: `User with emailAdress ${emailAdress} cannot be found`,
                             });
                         }
                     }
@@ -85,8 +85,8 @@ module.exports = {
     validateLogin(req, res, next) {
         try {
             assert(
-                typeof req.body.emailAddress === 'string',
-                'emailAddress must be a string.'
+                typeof req.body.email === 'string',
+                'emailAdress must be a string.'
             );
             assert(
                 typeof req.body.password === 'string',
@@ -130,12 +130,12 @@ module.exports = {
     validateEmail(req, res, next) {
         // Check if the email is valid
         const emailRegex = /^[a-z]\.[a-z]+@avans\.nl$/;
-        const isValidEmail = emailRegex.test(req.body.emailAddress);
+        const isValidEmail = emailRegex.test(req.body.emailAdress);
 
         // If the email is not valid, return a 400 Bad Request response
         if (!isValidEmail) {
             return res.status(400).json({
-                error: 'Invalid email address.',
+                error: 'Invalid email adress.',
                 datetime: new Date().toISOString(),
             });
         }

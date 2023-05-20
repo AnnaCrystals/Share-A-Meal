@@ -62,22 +62,22 @@ const userController = {
     },
 
     createUser: function (req, res, next) {
-        const { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = req.body;
+        const { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = req.body;
         try {
             assert(typeof firstName === 'string', 'firstName must be a string');
             assert(typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'string', 'street must be a string');
             assert(typeof city === 'string', 'city must be a string');
             //assert(typeof isActive === 'integer', 'isActive must be a integer');
-            assert(typeof emailAddress === 'string', 'emailAddress must be a string');
+            assert(typeof emailAdress === 'string', 'emailAdress must be a string');
             assert(typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'string', 'phoneNumber must be a string');
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            assert(emailRegex.test(emailAddress), 'Email address is not valid');
+            assert(emailRegex.test(emailAdress), 'Email adress is not valid');
 
             const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-            assert(passwordRegex.test(password), 'Email address is not valid');
+            assert(passwordRegex.test(password), 'Password is not valid');
 
             pool.getConnection(function (err, conn) {
                 if (err) {
@@ -90,8 +90,8 @@ const userController = {
 
                 if (conn) {
 
-                    const queryCreate = 'INSERT INTO user (firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-                    conn.query(queryCreate, [firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber], function (err, results, fields) {
+                    const queryCreate = 'INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+                    conn.query(queryCreate, [firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber], function (err, results, fields) {
                         if (err) {
                             if (err.code === 'ER_DUP_ENTRY') {
                                 console.log("Error: Duplicate entry");
@@ -124,7 +124,7 @@ const userController = {
                                     street,
                                     city,
                                     isActive,
-                                    emailAddress,
+                                    emailAdress,
                                     password,
                                     phoneNumber
                                 }
@@ -244,14 +244,14 @@ const userController = {
             })
         }
 
-        const { firstName, lastName, street, city, isActive, emailAddress, password, phoneNumber } = req.body;
+        const { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = req.body;
         try {
             assert(typeof firstName === 'undefined' || typeof firstName === 'string', 'firstName must be a string');
             assert(typeof lastName === 'undefined' || typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'undefined' || typeof street === 'string', 'street must be a string');
             assert(typeof city === 'undefined' || typeof city === 'string', 'city must be a string');
             //assert(typeof isActive === 'undefined' || typeof isActive === 'integer', 'isActive must be a integer');
-            assert(typeof emailAddress === 'undefined' || typeof emailAddress === 'string', 'emailAddress must be a string');
+            assert(typeof emailAdress === 'undefined' || typeof emailAdress === 'string', 'emailAdress must be a string');
             assert(typeof password === 'undefined' || typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'undefined' || typeof phoneNumber === 'string', 'phoneNumber must be a string');
 
@@ -297,11 +297,11 @@ const userController = {
                             user.street = street || user.street;
                             user.city = city || user.city;
                             user.isActive = isActive || user.isActive;
-                            user.emailAddress = emailAddress || user.emailAddress;
+                            user.emailAdress = emailAdress || user.emailAdress;
                             user.phoneNumber = phoneNumber || user.phoneNumber;
 
-                            const query = 'UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAddress = ?, password = ?, phoneNumber = ? WHERE id = ?';
-                            conn.query(query, [user.firstName, user.lastName, user.street, user.city, user.isActive, user.emailAddress, password, user.phoneNumber, userId], function (err, results, fields) {
+                            const query = 'UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, password = ?, phoneNumber = ? WHERE id = ?';
+                            conn.query(query, [user.firstName, user.lastName, user.street, user.city, user.isActive, user.emailAdress, password, user.phoneNumber, userId], function (err, results, fields) {
                                 console.log('Executing update query');
                                 if (err) {
                                     console.log("Error updating user:", err);
