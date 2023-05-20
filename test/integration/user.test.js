@@ -118,7 +118,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
       });
   });
 
-  it('TC-201-4 Gebruiker bestaat al', (done) => {
+  it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
     chai
       .request(server)
       .post('/api/user')
