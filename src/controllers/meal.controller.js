@@ -177,45 +177,51 @@ const mealController = {
         //         })
         //     }
         // },
-        console.log(req.params)
+        console.log(req.params);
         const mealId = parseInt(req.params.mealid);
 
         pool.getConnection(function (err, conn) {
             if (err) {
                 console.log('error', err);
-                next('error: ' + err.message);
+                return next('error: ' + err.message);
             }
+
             if (conn) {
                 conn.query(`SELECT * FROM \`meal\` WHERE \`id\`=${mealId}`, function (err, results, fields) {
                     if (err) {
-                        res.status(404).json({
-                            status: 404,
-                            message: `Meal with ID ${mealId} not found`,
+                        console.log('error', err);
+                        res.status(500).json({
+                            status: 500,
+                            message: 'Internal Server Error',
                             data: {}
-                        })
-                    }
-
-                    //
-                    if (results.length === 1) {
-                        res.status(200).json({
-                            status: 200,
-                            message: `Meal with ID ${mealId} found`,
-                            data: results[0],
-                        })
+                        });
                     } else {
-                        res.status(404).json({
-                            status: 404,
-                            message: `Meal with ID ${mealId} not found`,
-                            data: {}
-                        })
+                        if (results.length === 1) {
+                            res.status(200).json({
+                                status: 200,
+                                message: `Meal with ID ${mealId} found`,
+                                data: results[0],
+                            });
+                        } else {
+                            res.status(404).json({
+                                status: 404,
+                                message: `Meal with ID ${mealId} not found`,
+                                data: {}
+                            });
+                        }
                     }
 
                     conn.release();
                 });
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    message: 'Internal Server Error',
+                    data: {}
+                });
             }
         });
     },
-
     mealUpdate: function (req, res, next) {
         //const { userId } = req.params;
         const mealId = parseInt(req.params.mealId);
