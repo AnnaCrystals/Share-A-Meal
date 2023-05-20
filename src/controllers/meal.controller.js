@@ -196,7 +196,7 @@ const mealController = {
                     }
 
                     //
-                    if (results.length == 1) {
+                    if (results.length === 1) {
                         res.status(200).json({
                             status: 200,
                             message: `Meal with ID ${mealId} found`,
