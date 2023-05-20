@@ -38,60 +38,57 @@ const mealController = {
     },
 
     createMeal: function (req, res, next) {
+        console.log('Creating a meal');
+
         const { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes } = { ...req.body, cookId: req.user.id };
         try {
-
-            assert(typeof isActive === 'number', 'isActive must be a integer');
-            assert(typeof isVega === 'number', 'isVega must be a integer');
-            assert(typeof isVegan === 'intnumbereger', 'isVegan must be a integer');
-            assert(typeof isToTakeHome === 'number', 'isToTakeHome must be a integer');
+            console.log('Validating input data');
+            assert(typeof isActive === 'number', 'isActive must be a number');
+            assert(typeof isVega === 'number', 'isVega must be a number');
+            assert(typeof isVegan === 'number', 'isVegan must be a number');
+            assert(typeof isToTakeHome === 'number', 'isToTakeHome must be a number');
             assert(typeof dateTime === 'string', 'dateTime must be a string');
-            assert(typeof maxAmountOfParticipants === 'number', 'maxAmountOfParticipants must be a integer');
+            assert(typeof maxAmountOfParticipants === 'number', 'maxAmountOfParticipants must be a number');
             assert(typeof price === 'string', 'price must be a string');
             assert(typeof imageUrl === 'string', 'imageUrl must be a string');
-            assert(typeof cookId === 'number', 'cookId must be a integer');
+            assert(typeof cookId === 'number', 'cookId must be a number');
             assert(typeof createDate === 'string', 'createDate must be a string');
             assert(typeof updateDate === 'string', 'updateDate must be a string');
             assert(typeof name === 'string', 'name must be a string');
             assert(typeof description === 'string', 'description must be a string');
             assert(typeof allergenes === 'string', 'allergenes must be a string');
 
-
             pool.getConnection(function (err, conn) {
                 if (err) {
-                    console.log("Error: Failed to establish a database connection");
+                    console.log('Error: Failed to establish a database connection');
                     next({
                         code: 500,
-                        message: "Internal Server Error"
+                        message: 'Internal Server Error'
                     });
                 }
 
                 if (conn) {
-
+                    console.log('Executing database query');
                     const queryCreate = 'INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                     conn.query(queryCreate, [isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes], function (err, results, fields) {
                         if (err) {
                             if (err.code === 'ER_DUP_ENTRY') {
-                                console.log("Error: Duplicate entry");
-
+                                console.log('Error: Duplicate entry');
                                 res.status(403).json({
                                     status: 403,
-                                    message: "Meal already exists.",
-                                    data: {
-                                    }
-
-                                })
-
+                                    message: 'Meal already exists.',
+                                    data: {}
+                                });
                             } else {
-                                console.log("Error: Failed to execute insert query", err);
+                                console.log('Error: Failed to execute insert query', err);
                                 next({
                                     code: 500,
-                                    message: "Internal Server Error"
+                                    message: 'Internal Server Error'
                                 });
                             }
                         } else {
                             const newMealId = results.insertId;
-                            console.log("Meal created successfully");
+                            console.log('Meal created successfully');
                             res.status(201).json({
                                 status: 201,
                                 message: `Meal with ID ${newMealId} has been added`,
@@ -119,7 +116,7 @@ const mealController = {
                 }
             });
         } catch (err) {
-            console.log("Error: Validation failed", err);
+            console.log('Error: Validation failed', err);
             res.status(400).json({
                 status: 400,
                 message: err.toString(),
