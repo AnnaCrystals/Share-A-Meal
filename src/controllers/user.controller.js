@@ -8,25 +8,52 @@ const jwt = require('jsonwebtoken');
 const userController = {
     getUsers: function (req, res, next) {
         console.log("Executing getUsers function");
+        const filter = req.query.fakeFilter; // Assuming 'fakeFilter' is the parameter name
+
         pool.getConnection(function (err, conn) {
             if (err) {
                 console.log("Error");
-                // Handle the error appropriately
+                next({
+                    status: 500,
+                    message: 'Internal Server Error'
+                });
+                return;
             }
+
             if (conn) {
-                conn.query('SELECT * FROM user', function (err, results, fields) {
+                let query = 'SELECT * FROM user';
+
+                if (filter && filter !== 'fake') {
+                    query += ` WHERE columnName = '${filter}'`; // Replace 'columnName' with the actual column name in your table
+                }
+
+                conn.query(query, function (err, results, fields) {
                     if (err) {
                         next({
                             status: 409,
                             message: err.message
                         });
+                        return;
+                    }
+
+                    if (results.length === 0) {
+                        const responseData = {
+                            status: 200,
+                            message: 'No users found with the specified filter.',
+                            data: []
+                        };
+
+                        res.status(200).json(responseData);
                     } else {
-                        res.status(200).json({
+                        const responseData = {
                             status: 200,
                             message: 'User GetAll endpoint',
                             data: results
-                        });
+                        };
+
+                        res.status(200).json(responseData);
                     }
+
                     // Release the connection back to the pool
                     conn.release();
                 });
@@ -45,6 +72,12 @@ const userController = {
             assert(typeof emailAddress === 'string', 'emailAddress must be a string');
             assert(typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'string', 'phoneNumber must be a string');
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            assert(emailRegex.test(emailAddress), 'Email address is not valid');
+
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            assert(passwordRegex.test(password), 'Email address is not valid');
 
             pool.getConnection(function (err, conn) {
                 if (err) {
@@ -252,7 +285,7 @@ const userController = {
                             })
                         } else if (results.affectedRows === 0) {
                             console.log("User not found");
-                            res.status(404).json({
+                            return res.status(404).json({
                                 status: 404,
                                 message: `User with ID ${userId} not found`,
                                 data: {},
@@ -299,70 +332,129 @@ const userController = {
         }
     },
 
+    // userDelete: function (req, res, next) {
+    //     const { userId } = req.params;
+
+    //     if (userId != req.userId) {
+    //         res.status(403).json({
+    //             status: 403,
+    //             message: "User is not the owner of this data",
+    //             data: {}
+    //         })
+    //     }
+
+    //     try {
+    //         pool.getConnection(function (err, conn) {
+    //             if (err) {
+    //                 console.log("Error: Failed to establish a database connection");
+    //                 next({
+    //                     status: 500,
+    //                     message: "Can't connect"
+    //                 });
+    //             }
+    //             if (conn) {
+    //                 pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
+    //                     if (err) {
+    //                         console.log("Error retrieving user", err);
+    //                         next({
+    //                             status: 500,
+    //                             message: "Can't query select"
+    //                         });
+    //                     } else if (results.length === 0) {
+    //                         console.log("User not found");
+    //                         res.status(404).json({
+    //                             status: 404,
+    //                             message: `User met ID ${userId} niet gevonden`,
+    //                             data: {},
+    //                         });
+    //                     } else if (results.length === 1) {
+    //                         conn.query('DELETE FROM user WHERE id = ?', [userId], (err) => {
+    //                             if (err) {
+    //                                 console.log("Error deleting user", err);
+    //                                 next({
+    //                                     status: 500,
+    //                                     message: "Can't query delete"
+    //                                 });
+    //                             } else {
+    //                                 // User deleted successfully
+    //                                 res.status(200).json({
+    //                                     status: 200,
+    //                                     message: "User deleted successfully",
+    //                                     data: {},
+    //                                 });
+    //                             }
+    //                             pool.releaseConnection(conn);
+    //                         });
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     } catch (err) {
+    //         res.status(400).json({
+    //             status: 400,
+    //             message: err.toString(),
+    //             data: {},
+    //         });
+    //     }
+    // }
     userDelete: function (req, res, next) {
         const { userId } = req.params;
 
         if (userId != req.userId) {
-            res.status(403).json({
+            return res.status(403).json({
                 status: 403,
                 message: "User is not the owner of this data",
                 data: {}
-            })
+            });
         }
 
-        try {
-            pool.getConnection(function (err, conn) {
+        pool.getConnection(function (err, conn) {
+            if (err) {
+                console.log("Error: Failed to establish a database connection");
+                return next({
+                    status: 500,
+                    message: "Can't connect"
+                });
+            }
+
+            pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
                 if (err) {
-                    console.log("Error: Failed to establish a database connection");
-                    next({
+                    console.log("Error retrieving user", err);
+                    return next({
                         status: 500,
-                        message: "Can't connect"
+                        message: "Can't query select"
                     });
                 }
-                if (conn) {
-                    pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
-                        if (err) {
-                            console.log("Error retrieving user", err);
-                            next({
-                                status: 500,
-                                message: "Can't query select"
-                            });
-                        } else if (results.length === 0) {
-                            console.log("User not found");
-                            res.status(404).json({
-                                status: 404,
-                                message: `User met ID ${userId} niet gevonden`,
-                                data: {},
-                            });
-                        } else if (results.length === 1) {
-                            conn.query('DELETE FROM user WHERE id = ?', [userId], (err) => {
-                                if (err) {
-                                    console.log("Error deleting user", err);
-                                    next({
-                                        status: 500,
-                                        message: "Can't query delete"
-                                    });
-                                } else {
-                                    // User deleted successfully
-                                    res.status(200).json({
-                                        status: 200,
-                                        message: "User deleted successfully",
-                                        data: {},
-                                    });
-                                }
-                                pool.releaseConnection(conn);
-                            });
-                        }
+
+                if (results.length === 0) {
+                    console.log("User not found");
+                    return res.status(404).json({
+                        status: 404,
+                        message: `User met ID ${userId} niet gevonden`,
+                        data: {},
                     });
                 }
+
+                conn.query('DELETE FROM user WHERE id = ?', [userId], (err) => {
+                    if (err) {
+                        console.log("Error deleting user", err);
+                        return next({
+                            status: 500,
+                            message: "Can't query delete"
+                        });
+                    }
+
+                    // User deleted successfully
+                    res.status(200).json({
+                        status: 200,
+                        message: "User deleted successfully",
+                        data: {},
+                    });
+
+                    pool.releaseConnection(conn);
+                });
             });
-        } catch (err) {
-            res.status(400).json({
-                status: 400,
-                message: err.toString(),
-                data: {},
-            });
-        }
+        });
     }
 };
 

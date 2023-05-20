@@ -81,6 +81,7 @@ module.exports = {
             }
         });
     },
+    
     validateLogin(req, res, next) {
         try {
             assert(
@@ -99,6 +100,7 @@ module.exports = {
             });
         }
     },
+
     validateToken(req, res, next) {
         const header = req.headers.authorization;
         if (!header) {
@@ -123,5 +125,42 @@ module.exports = {
             req.userId = decoded.id; // Update this line
             next();
         });
+    },
+
+    validateEmail(req, res, next) {
+        // Check if the email is valid
+        const emailRegex = /^[a-z]\.[a-z]+@avans\.nl$/;
+        const isValidEmail = emailRegex.test(req.body.emailAddress);
+
+        // If the email is not valid, return a 400 Bad Request response
+        if (!isValidEmail) {
+            return res.status(400).json({
+                error: 'Invalid email address.',
+                datetime: new Date().toISOString(),
+            });
+        }
+
+        // If the email is valid, continue to the next middleware or route handler
+        next();
+    },
+
+    validatePassword(req, res, next) {
+        // Check if the password is valid
+        const password = req.body.password;
+
+        // Password must match the regex pattern
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        const isValidPassword = passwordRegex.test(password);
+
+        // If the password is not valid, return a 400 Bad Request response
+        if (!isValidPassword) {
+            return res.status(400).json({
+                error: 'Invalid password. Password should be at least 8 characters long, contain at least 1 number, and at least 1 uppercase letter.',
+                datetime: new Date().toISOString(),
+            });
+        }
+
+        // If the password is valid, continue to the next middleware or route handler
+        next();
     },
 };
