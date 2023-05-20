@@ -40,9 +40,9 @@ const mealController = {
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-        const dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
+        let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-        const newMeal =  { isActive, isVega, isVegan, isToTakeHome, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes } = { ...req.body, cookId: req.userId };
+        const newMeal =  { isActive, isVega, isVegan, isToTakeHome, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes, dateTime } = { ...req.body, cookId: req.userId };
         try {
             console.log('Validating input data');
             assert(typeof isActive === 'number', 'isActive must be a number');
