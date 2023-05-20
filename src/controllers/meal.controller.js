@@ -4,6 +4,7 @@ const assert = require('assert');
 const pool = require('../util/mysql-db');
 const jwt = require('jsonwebtoken');
 
+const DATE_FORMATER = require("dateformat");
 
 const mealController = {
     getMeals: function (req, res, next) {
@@ -36,24 +37,25 @@ const mealController = {
         });
 
     },
-
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-        const { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes } = { ...req.body, cookId: req.user.id };
+        const dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+        const newMeal =  { isActive, isVega, isVegan, isToTakeHome, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes } = { ...req.body, cookId: req.userId };
         try {
             console.log('Validating input data');
             assert(typeof isActive === 'number', 'isActive must be a number');
             assert(typeof isVega === 'number', 'isVega must be a number');
             assert(typeof isVegan === 'number', 'isVegan must be a number');
             assert(typeof isToTakeHome === 'number', 'isToTakeHome must be a number');
-            assert(typeof dateTime === 'string', 'dateTime must be a string');
+            //assert(typeof dateTime === 'string', 'dateTime must be a string');
             assert(typeof maxAmountOfParticipants === 'number', 'maxAmountOfParticipants must be a number');
             assert(typeof price === 'string', 'price must be a string');
             assert(typeof imageUrl === 'string', 'imageUrl must be a string');
             assert(typeof cookId === 'number', 'cookId must be a number');
-            assert(typeof createDate === 'string', 'createDate must be a string');
-            assert(typeof updateDate === 'string', 'updateDate must be a string');
+            //assert(typeof createDate === 'string', 'createDate must be a string');
+            //assert(typeof updateDate === 'string', 'updateDate must be a string');
             assert(typeof name === 'string', 'name must be a string');
             assert(typeof description === 'string', 'description must be a string');
             assert(typeof allergenes === 'string', 'allergenes must be a string');
@@ -62,15 +64,17 @@ const mealController = {
                 if (err) {
                     console.log('Error: Failed to establish a database connection');
                     next({
-                        code: 500,
+                        status: 500,
                         message: 'Internal Server Error'
                     });
                 }
 
                 if (conn) {
                     console.log('Executing database query');
-                    const queryCreate = 'INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                    conn.query(queryCreate, [isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes], function (err, results, fields) {
+                    //const queryCreate = 'INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                    let sqlInsertStatement = "INSERT INTO meal SET ?";
+                    
+                    conn.query(sqlInsertStatement, newMeal, function (err, results, fields) {
                         if (err) {
                             if (err.code === 'ER_DUP_ENTRY') {
                                 console.log('Error: Duplicate entry');
@@ -82,7 +86,7 @@ const mealController = {
                             } else {
                                 console.log('Error: Failed to execute insert query', err);
                                 next({
-                                    code: 500,
+                                    status: 500,
                                     message: 'Internal Server Error'
                                 });
                             }
@@ -103,8 +107,8 @@ const mealController = {
                                     price,
                                     imageUrl,
                                     cookId,
-                                    createDate,
-                                    updateDate,
+                                    //createDate,
+                                    //updateDate,
                                     name,
                                     description,
                                     allergenes
@@ -124,7 +128,6 @@ const mealController = {
             });
         }
     },
-
     getMealWithId: function (req, res, next) {
         //     const mealId = parseInt(req.params.mealId);
         //     //const userId = req.params.userId;
@@ -323,7 +326,6 @@ const mealController = {
             });
         }
     },
-
     mealDelete: function (req, res, next) {
         //     const mealId = parseInt(req.params.mealId);
         //     //const { userId } = req.params;
@@ -381,7 +383,7 @@ const mealController = {
         //         });
         //     }
         // } const mealId = parseInt(req.params.mealid);
-        const mealId = parseInt(req.params.mealid);
+        const mealId = parseInt(req.params.mealId);
         //SELECT MEAL SQL
         const selectMealSql = `SELECT cookId FROM \`meal\` WHERE \`id\` = ${mealId}`;
         //CONNECTION

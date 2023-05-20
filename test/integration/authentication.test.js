@@ -43,7 +43,64 @@ const INSERT_MEALS =
   "(2, 'Meal B', 'description', 'image url', NOW(), 5, 6.50, 1);";
 
 
-describe('TC-10x login', () => {
-  
+describe('TC-10x - Login', () => {
+  describe('TC-101 - Inloggen', (done) => {
+    it.skip('TC-101-1 Verplicht veld ontbreekt', (done) => {
+      chai.request(server)
+        .post('/api/login')
+        .send({
+          password: "secret"
+        })
+        .end((err, res) => {
+          res.body.should.have.status(400)
+          res.body.should.have.property('data').to.be.empty
+          done();
+        });
+    });
+    it.skip('TC-101-2 Niet-valide wachtwoord', (done) => {
+      chai.request(server)
+        .post('/api/login')
+        .send({
+          emailAdress: "m.vandullemen@server.nl",
+          password: "secreawdawdawdt"
+        })
+        .end((err, res) => {
+          res.body.should.have.status(400)
+          res.body.should.have.property('message').to.be.equal("Email adress and password do not match")
+          done();
+        });
+    });
+    it.skip('TC-101-3 Gebruiker bestaat niet', (done) => {
+      chai.request(server)
+        .post('/api/login')
+        .send({
+          emailAdress: "k.morrororoij@server.com",
+          password: "secret"
+        })
+        .end((err, res) => {
+          res.body.should.have.status(404)
+          res.body.should.have.property('message')
+          res.body.should.have.property('data').to.be.empty
+          done();
+        });
+    });
+    it.skip('TC-101-4 Gebruiker succesvol ingelogd', (done) => {
+      chai.request(server)
+        .post('/api/login')
+        .send({
+          emailAdress: "m.vandullemen@server.nl",
+          password: "secret"
+        })
+        .end((err, res) => {
+          res.body.should.have.status(200)
+          res.body.should.have.property('message')
+          res.body.should.have.property('data')
+          const data = res.body.data;
+          data.should.have.property('id').to.be.equal(1)
+          data.should.have.property('token')
 
+          done();
+        });
+    });
+  });
 });
