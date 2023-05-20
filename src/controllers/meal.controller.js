@@ -41,19 +41,19 @@ const mealController = {
         const { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes } = { ...req.body, cookId: req.user.id };
         try {
 
-            assert(typeof isActive === 'integer', 'isActive must be a integer');
-            assert(typeof isVega === 'integer', 'isVega must be a integer');
-            assert(typeof isVegan === 'integer', 'isVegan must be a integer');
-            assert(typeof isToTakeHome === 'integer', 'isToTakeHome must be a integer');
+            assert(typeof isActive === 'number', 'isActive must be a integer');
+            assert(typeof isVega === 'number', 'isVega must be a integer');
+            assert(typeof isVegan === 'intnumbereger', 'isVegan must be a integer');
+            assert(typeof isToTakeHome === 'number', 'isToTakeHome must be a integer');
             assert(typeof dateTime === 'string', 'dateTime must be a string');
-            assert(typeof maxAmountOfParticipants === 'integer', 'maxAmountOfParticipants must be a integer');
+            assert(typeof maxAmountOfParticipants === 'number', 'maxAmountOfParticipants must be a integer');
             assert(typeof price === 'string', 'price must be a string');
             assert(typeof imageUrl === 'string', 'imageUrl must be a string');
-            assert(typeof cookId === 'integer', 'cookId must be a integer');
+            assert(typeof cookId === 'number', 'cookId must be a integer');
             assert(typeof createDate === 'string', 'createDate must be a string');
             assert(typeof updateDate === 'string', 'updateDate must be a string');
             assert(typeof name === 'string', 'name must be a string');
-            assert(typeof description === 'string', 'name must be a string');
+            assert(typeof description === 'string', 'description must be a string');
             assert(typeof allergenes === 'string', 'allergenes must be a string');
 
 

@@ -47,7 +47,7 @@ before((done) => {
   chai
     .request(server)
     .post("/api/login")
-    .send({ emailAdress: "a.rider@avans.nl", password: "Astolforider12" })
+    .send({ emailAdress: "m.vandullemen@server.nl", password: "secret" })
     .end((loginErr, loginRes) => {
       token = loginRes.body.data.token;
       logger.info(`Token created: ${token}`);
@@ -55,12 +55,35 @@ before((done) => {
     });
 });
 
-describe('TC-301 Toevoegen van maaltijd', () => {
+  describe('TC-301 Toevoegen van een maaltijd', () => {
+    it.skip('TC-301-1 Verplicht veld ontbreekt', (done) => {
+      chai.request(server)
+        .post('/api/meal')
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          isActive: 1,
+          isVega: 0,
+          isVegan: 0,
+          isToTakeHome: 1,
+          maxAmountOfParticipants: 2,
+          price: "19.95",
+          imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNFe0c3pucAjpExbQmZzmRwfAjKPyHEhzSF-A-B-UbOA&s",
+          cookId: 2,
+          description: "Een heerlijke hamburger! Altijd goed voor tevreden gesmikkel!",
+          allergenes: ""
+        })
+        .end((err, res) => {
+          res.body.should.be.an('object');
+          res.body.should.has.property('status').to.be.equal(400);
+          res.body.should.has.property('message');
+          res.body.should.has.property('data').to.be.empty;
+          done();
+        });
+    });
 
 
-  
 
-});
+  });
 
 
 
