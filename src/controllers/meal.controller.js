@@ -178,7 +178,16 @@ const mealController = {
         //     }
         // },
         console.log(req.params);
-        const mealId = parseInt(req.params.mealid);
+        const mealId = parseInt(req.params.mealId);
+
+        if (isNaN(mealId)) {
+            res.status(400).json({
+                status: 400,
+                message: 'Invalid mealId',
+                data: {}
+            });
+            return;
+        }
 
         pool.getConnection(function (err, conn) {
             if (err) {
@@ -186,6 +195,7 @@ const mealController = {
                 return next('error: ' + err.message);
             }
 
+            // Rest of the code remains unchanged...
             if (conn) {
                 conn.query(`SELECT * FROM \`meal\` WHERE \`id\`=${mealId}`, function (err, results, fields) {
                     if (err) {
