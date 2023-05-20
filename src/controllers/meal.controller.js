@@ -42,7 +42,7 @@ const mealController = {
 
         let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-        const newMeal =  { isActive, isVega, isVegan, isToTakeHome, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes, dateTime } = { ...req.body, cookId: req.userId };
+        const newMeal = { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes } = { ...req.body, cookId: req.userId };
         try {
             console.log('Validating input data');
             assert(typeof isActive === 'number', 'isActive must be a number');
@@ -73,7 +73,7 @@ const mealController = {
                     console.log('Executing database query');
                     //const queryCreate = 'INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                     let sqlInsertStatement = "INSERT INTO meal SET ?";
-                    
+
                     conn.query(sqlInsertStatement, newMeal, function (err, results, fields) {
                         if (err) {
                             if (err.code === 'ER_DUP_ENTRY') {
