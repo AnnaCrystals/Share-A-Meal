@@ -40,25 +40,37 @@ const mealController = {
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-        //let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
+         //let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
         let date = new Date();
-        let dateTime = date.toISOString();
+        let formattedDateTime = date.toISOString();
+        let dateTime = formattedDateTime.replace('T', ' ').replace('Z', '');
         console.log(dateTime);
 
-        const newMeal = { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes } = { ...req.body, cookId: req.userId };
+        const newMeal = {
+            isActive,
+            isVega,
+            isVegan,
+            isToTakeHome,
+            dateTime,
+            maxAmountOfParticipants,
+            price,
+            imageUrl,
+            cookId,
+            name,
+            description,
+            allergenes
+        } = { ...req.body, cookId: req.userId };
+
         try {
             console.log('Validating input data');
             assert(typeof isActive === 'number', 'isActive must be a number');
             assert(typeof isVega === 'number', 'isVega must be a number');
             assert(typeof isVegan === 'number', 'isVegan must be a number');
             assert(typeof isToTakeHome === 'number', 'isToTakeHome must be a number');
-            //assert(typeof dateTime === 'string', 'dateTime must be a string');
             assert(typeof maxAmountOfParticipants === 'number', 'maxAmountOfParticipants must be a number');
             assert(typeof price === 'string', 'price must be a string');
             assert(typeof imageUrl === 'string', 'imageUrl must be a string');
             assert(typeof cookId === 'number', 'cookId must be a number');
-            //assert(typeof createDate === 'string', 'createDate must be a string');
-            //assert(typeof updateDate === 'string', 'updateDate must be a string');
             assert(typeof name === 'string', 'name must be a string');
             assert(typeof description === 'string', 'description must be a string');
             assert(typeof allergenes === 'string', 'allergenes must be a string');
@@ -74,7 +86,6 @@ const mealController = {
 
                 if (conn) {
                     console.log('Executing database query');
-                    //const queryCreate = 'INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                     let sqlInsertStatement = "INSERT INTO meal SET ?";
 
                     conn.query(sqlInsertStatement, newMeal, function (err, results, fields) {
@@ -105,13 +116,11 @@ const mealController = {
                                     isVega,
                                     isVegan,
                                     isToTakeHome,
-                                    dateTime,
+                                    dateTime: formattedDateTime,
                                     maxAmountOfParticipants,
                                     price,
                                     imageUrl,
                                     cookId,
-                                    //createDate,
-                                    //updateDate,
                                     name,
                                     description,
                                     allergenes
@@ -131,6 +140,8 @@ const mealController = {
             });
         }
     },
+
+
     getMealWithId: function (req, res, next) {
         //     const mealId = parseInt(req.params.mealId);
         //     //const userId = req.params.userId;
