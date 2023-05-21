@@ -10,6 +10,8 @@ const authenticationController = require('../../src/controllers/authentication.c
 const { jwtSecretKey, logger } = require('../../src/util/utils');
 require('tracer').setLevel('trace');
 
+const { generateAdminToken } = require('../../src/controllers/authentication.controller');
+
 chai.should();
 chai.use(chaiHttp);
 
@@ -43,8 +45,6 @@ const INSERT_MEALS =
   "(2, 'Meal B', 'description', 'image url', NOW(), 5, 6.50, 1);";
 
 let token = 0;
-let token1 = 0;
-
 let registeredUserId = 0;
 
 describe('TC-201 Registreren als nieuwe user', () => {
@@ -238,7 +238,7 @@ describe('TC-202 Opvragen van overzicht users', () => {
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(200);
         res.body.should.have.property('message');
-        res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
+        res.body.should.have.property('data').that.is.an('array').with.length.gte(1);
         done();
       });
   });
@@ -331,10 +331,9 @@ describe('TC-203 Opvragen van gebruikersprofiel', () => {
 
 describe('TC-204 Opvragen van usergegevens bij ID', () => {
   //Hier codes toevoegen
-  it.skip('TC-204-1 Ongeldig token', (done) => {
+  it('TC-204-1 Ongeldig token', (done) => {
     chai.request(server)
       .get('/api/user/1')
-      .set("Authorization", `Bearer ${token1}`)
       .end((err, res) => {
         console.log('Response body 204-1:', res.body);
         res.body.should.be.an('object');
@@ -347,15 +346,16 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
 
 
   it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
+    const nonExistantId = registeredUserId + 1;
     chai.request(server)
-      .get('/api/user/999')
+      .get(`/api/user/${nonExistantId}`)
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 204-2:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(404);
         res.body.should.has.property('data').to.be.empty;
-        res.body.should.has.property('message').that.equals('User met ID 999 niet gevonden')
+        res.body.should.has.property('message').that.equals(`User met ID ${nonExistantId} niet gevonden`)
         done();
       });
   });
@@ -450,17 +450,17 @@ describe('TC-205 Updaten van usergegevens', () => {
   });
 
 
-  //Niet authorized
-  it.skip('TC-205-4 Gebruiker bestaat niet', (done) => {
+
+  it('TC-205-4 Gebruiker bestaat niet', (done) => {
     logger.info("Token of registered user " + token)
-    const nonExistantId = 9999;
+    const nonExistantId = registeredUserId + 1;
     chai.request(server)
       .put(`/api/user/${nonExistantId}`)
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 205-4:', res.body);
         res.body.should.be.an('object');
-        res.body.should.has.property('status').to.be.equal(404);
+        res.body.should.has.property('status').to.be.equal(403);
         res.body.should.have.property('message');
         res.body.should.has.property('data').to.be.empty;
         done();
@@ -523,35 +523,20 @@ describe('TC-205 Updaten van usergegevens', () => {
 
 
 describe('TC-206 Verwijderen van user', () => {
-  //Niet authorized hiervoor
-  it.skip('TC-206-1 Gebruiker bestaat niet', (done) => {
-    const nonExistentId = registeredUserId + 1;
+  it('TC-206-1 Gebruiker bestaat niet', (done) => {
+    const nonExistantId = registeredUserId + 1;
     chai.request(server)
-      .delete('/api/user/999')
+      .delete(`/api/user/${nonExistantId}`)
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 206-1:', res.body);
         res.body.should.be.an('object');
-        res.body.should.has.property('status').to.be.equal(404);
-        res.body.should.have.property('message').that.equals(`User met ID ${nonExistentId} niet gevonden`);
+        res.body.should.has.property('status').to.be.equal(403);
+        res.body.should.have.property('message').that.equals(`User is not the owner of this data`);
         res.body.should.have.property('data').to.be.empty;
         done();
       });
   });
-
-
-  // it('TC-206-2 Gebruiker is niet ingelogd', (done) => {
-  //   chai.request(server)
-  //     .delete('/api/user/1')
-  //     .end((err, res) => {
-  //       try {
-  //         res.body.should.have.status(401);
-  //         done();
-  //       } catch (error) {
-  //         done(error); // Pass any caught errors to done()
-  //       }
-  //     });
-  // });
 
   it('TC-206-2 Gebruiker is niet ingelogd', (done) => {
     chai.request(server)

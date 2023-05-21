@@ -82,7 +82,7 @@ module.exports = {
             }
         });
     },
-    
+
     validateLogin(req, res, next) {
         try {
             assert(

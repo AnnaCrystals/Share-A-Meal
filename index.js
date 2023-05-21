@@ -61,6 +61,7 @@ app.use((err, req, res, next) => {
   // Check if err.code is defined and a valid status code
   const statusCode = err.code && typeof err.code === 'number' ? err.code : 500;
 
+  logger.error(err);
   logger.error(statusCode, err.message);
   res.status(statusCode).json({
     statusCode: statusCode,

@@ -9,6 +9,8 @@ const userController = {
     getUsers: function (req, res, next) {
         console.log("Executing getUsers function");
         const filter = req.query.fakeFilter; // Assuming 'fakeFilter' is the parameter name
+        const isActive = req.query.isActive;
+        const password = req.query.password;
 
         pool.getConnection(function (err, conn) {
             if (err) {
@@ -23,8 +25,20 @@ const userController = {
             if (conn) {
                 let query = 'SELECT * FROM user';
 
+                if (isActive !== undefined) {
+                    if (isActive === 'true') {
+                        query += ' WHERE isActive = 1';
+                    } else if (isActive === 'false') {
+                        query += ' WHERE isActive = 0';
+                    }
+                }
+
                 if (filter && filter !== 'fake') {
-                    query += ` WHERE columnName = '${filter}'`; // Replace 'columnName' with the actual column name in your table
+                    query += ` AND columnName = '${filter}'`; // Replace 'columnName' with the actual column name in your table
+                }
+
+                if (password === 'secret') {
+                    query += ` AND password = 'secret'`;
                 }
 
                 conn.query(query, function (err, results, fields) {
