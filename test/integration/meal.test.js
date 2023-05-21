@@ -150,7 +150,7 @@ describe('TC-301 Toevoegen van een maaltijd', () => {
         registeredMealId = res.body.data.id;
         done();
       });
-  })
+  });
 
   // it.only('TC-301-3 Maaltijd succesvol toegevoegd', (done) => {
   //   chai
@@ -211,7 +211,7 @@ describe('TC-303 Opvragen van alle maaltijden', () => {
         res.body.should.has.property('message');
         res.body.should.has.property('data').that.is.an('array').with.length.gte(2);
         const firstMeal = res.body.data[0];
-        firstMeal.name.should.equal('Aubergine uit de oven met feta, muntrijst en tomatensaus');
+        firstMeal.name.should.equal('Pasta Bolognese met tomaat, spekjes en kaas');
         done();
       });
   })
