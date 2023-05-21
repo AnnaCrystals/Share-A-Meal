@@ -41,9 +41,6 @@ const mealController = {
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-        
-        //let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
-        //let dateTime = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
 
         const newMeal = {
@@ -116,7 +113,7 @@ const mealController = {
                                     isVega,
                                     isVegan,
                                     isToTakeHome,
-                                    dateTime,
+                                    //dateTime,
                                     maxAmountOfParticipants,
                                     price,
                                     imageUrl,
