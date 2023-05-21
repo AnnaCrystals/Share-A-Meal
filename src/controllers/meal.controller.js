@@ -4,8 +4,7 @@ const assert = require('assert');
 const pool = require('../util/mysql-db');
 const jwt = require('jsonwebtoken');
 
-// const DATE_FORMATER = require("dateformat");
-//const dateFormat = require('dateformat');
+
 const moment = require('moment');
 
 const mealController = {
@@ -42,9 +41,9 @@ const mealController = {
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-        // let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
-        //let dateTime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-        let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+        
+        //let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+        let dateTime = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
         
         const newMeal = {
             isActive,
