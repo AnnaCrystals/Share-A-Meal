@@ -113,7 +113,7 @@ const mealController = {
                                     isVega,
                                     isVegan,
                                     isToTakeHome,
-                                    //dateTime,
+                                    dateTime,
                                     maxAmountOfParticipants,
                                     price,
                                     imageUrl,
