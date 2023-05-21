@@ -1,5 +1,3 @@
-//process.env['DB_DATABASE'] = process.env.DB_DATABASE || 'shareameal-testdb';
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index');
@@ -58,7 +56,6 @@ describe('TC-201 Registreren als nieuwe user', () => {
         lastName: "de Vries",
         street: "Frost",
         city: "Snowland",
-        //emailAdress: "",
         password: "1Vriesvries",
         phoneNumber: "06151544554",
       })
@@ -66,14 +63,12 @@ describe('TC-201 Registreren als nieuwe user', () => {
         console.log('Response body 201-1:', res.body);
         res.body.should.be.an('object');
         res.should.have.status(400);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('AssertionError [ERR_ASSERTION]: emailAdress must be a string');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
-
-
-  //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   it('TC-201-2 Niet-valide emailadres', (done) => {
     chai.request(server)
@@ -91,8 +86,9 @@ describe('TC-201 Registreren als nieuwe user', () => {
         console.log('Response body 201-2:', res.body);
         res.body.should.be.an('object');
         res.should.have.status(400);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('AssertionError [ERR_ASSERTION]: Email adress is not valid');;
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -114,8 +110,9 @@ describe('TC-201 Registreren als nieuwe user', () => {
         console.log('Response body 201-3:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(400);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('AssertionError [ERR_ASSERTION]: Password is not valid');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -139,8 +136,9 @@ describe('TC-201 Registreren als nieuwe user', () => {
         console.log('Response body 201-4:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('User already exists.');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -149,7 +147,6 @@ describe('TC-201 Registreren als nieuwe user', () => {
     chai
       .request(server)
       .post('/api/user')
-      //.set("Authorization", `Bearer ${token}`)
       .send({
         firstName: "Astolfo",
         lastName: "Rider",
@@ -164,25 +161,25 @@ describe('TC-201 Registreren als nieuwe user', () => {
         console.log('Response body 201-5:', res.body);
         res.body.should.be.an('object')
         res.body.should.has.property('status').to.be.equal(201);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals(`User with ID ${res.body.data.id} has been added`);
         res.body.should.have.property('data').to.not.be.empty;
         let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("Astolfo");
         lastName.should.be.a('string').to.be.equal("Rider");
         street.should.be.a('string').to.be.equal("road");
         city.should.be.a('string').to.be.equal("Yggdmillennia");
-        //isActive.should.be.a('integer').to.be.equal(1);
+        isActive.should.be.a('number').to.be.equal(1);
         emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
         password.should.be.a('string').to.be.equal("Astolforider12");
         phoneNumber.should.be.a('string').to.be.equal("1242146");
 
-        // Store the registered user ID
         registeredUserId = res.body.data.id;
 
         done();
 
       });
   });
+
   after((done) => {
     chai
       .request(server)
@@ -191,14 +188,15 @@ describe('TC-201 Registreren als nieuwe user', () => {
       .end((loginErr, loginRes) => {
         token = loginRes.body.data.token;
         logger.info(`Token created: ${token}`);
+
         done();
       });
   });
 
 });
 
-
 describe('TC-202 Opvragen van overzicht users', () => {
+
   it('TC-202-1 Toon alle gebruikers (minimaal 2)', (done) => {
     chai
       .request(server)
@@ -208,9 +206,10 @@ describe('TC-202 Opvragen van overzicht users', () => {
         console.log('Response body 202-1:', res.body);
         res.body.should.be.an('object')
         res.body.should.has.property('status').to.be.equal(200);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('User GetAll endpoint');
         res.body.should.has.property('data').to.not.be.empty;
         res.body.should.has.property('data').that.is.an('array').with.length.gte(2);
+
         done();
       });
   });
@@ -223,8 +222,9 @@ describe('TC-202 Opvragen van overzicht users', () => {
         console.log('Response body 202-2:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(200);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User GetAll endpoint');
         res.body.should.has.property('data').to.not.be.empty;
+
         done();
       });
   });
@@ -237,8 +237,9 @@ describe('TC-202 Opvragen van overzicht users', () => {
         console.log('Response body 202-3:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(200);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User GetAll endpoint');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(1);
+
         done();
       });
   });
@@ -251,11 +252,12 @@ describe('TC-202 Opvragen van overzicht users', () => {
         console.log('Response body 202-4:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(200);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User GetAll endpoint');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
         const filteredUser = res.body.data[0];
         filteredUser.firstName.should.equal('Mariëtte');
         filteredUser.lastName.should.equal('van den Dullemen');
+
         done();
       });
 
@@ -269,7 +271,7 @@ describe('TC-202 Opvragen van overzicht users', () => {
         console.log('Response body 202-3:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(200);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User GetAll endpoint');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
         const filteredUser = res.body.data[0];
         filteredUser.firstName.should.equal('Mariëtte');
@@ -280,24 +282,26 @@ describe('TC-202 Opvragen van overzicht users', () => {
         const filteredUser2 = res.body.data[1];
         filteredUser2.isActive.should.equal(1);
         filteredUser2.password.should.equal('secret');
+
         done();
       });
 
   });
+
 });
 
-//Hier nog een 401 code toevoegen
 describe('TC-203 Opvragen van gebruikersprofiel', () => {
+
   it('TC-203-1 Ongeldig token', (done) => {
     chai.request(server)
       .get('/api/user/profile')
-      //.set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 203-1:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(401);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('Invalid token');
         res.body.should.have.property('data').to.be.empty;
+
         done();
       });
   });
@@ -311,26 +315,26 @@ describe('TC-203 Opvragen van gebruikersprofiel', () => {
         console.log('Response body 203-2:', res.body);
         res.body.should.be.an('object')
         res.body.should.has.property('status').to.be.equal(200);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('Get User profile');
         res.body.should.has.property('data').to.not.be.empty;
         let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("Astolfo");
         lastName.should.be.a('string').to.be.equal("Rider");
         street.should.be.a('string').to.be.equal("road");
         city.should.be.a('string').to.be.equal("Yggdmillennia");
-        //isActive.should.be.a('integer').to.be.equal(1);
+        isActive.should.be.a('number').to.be.equal(1);
         emailAdress.should.be.a('string').to.be.equal("a.rider@avans.nl");
         password.should.be.a('string').to.be.equal("Astolforider12");
         phoneNumber.should.be.a('string').to.be.equal("1242146");
+
         done();
       });
   });
+
 });
 
-
-
 describe('TC-204 Opvragen van usergegevens bij ID', () => {
-  //Hier codes toevoegen
+
   it('TC-204-1 Ongeldig token', (done) => {
     chai.request(server)
       .get('/api/user/1')
@@ -338,12 +342,12 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
         console.log('Response body 204-1:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(401);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('Invalid token');
         res.body.should.have.property('data').to.be.empty;
+
         done();
       });
   });
-
 
   it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
     const nonExistantId = registeredUserId + 1;
@@ -354,8 +358,9 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
         console.log('Response body 204-2:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(404);
+        res.body.should.has.property('message').that.equals(`User met ID ${nonExistantId} niet gevonden`);
         res.body.should.has.property('data').to.be.empty;
-        res.body.should.has.property('message').that.equals(`User met ID ${nonExistantId} niet gevonden`)
+
         done();
       });
   });
@@ -369,23 +374,26 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
         console.log('Response body 204-3:', res.body);
         res.body.should.be.an('object')
         res.body.should.has.property('status').to.be.equal(200);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('User met ID 2 is gevonden');
         res.body.should.has.property('data').to.not.be.empty;
         let { firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal("John");
         lastName.should.be.a('string').to.be.equal("Doe");
         street.should.be.a('string').to.be.equal("");
         city.should.be.a('string').to.be.equal("");
-        //isActive.should.be.a('integer').to.be.equal(1);
+        isActive.should.be.a('number').to.be.equal(1);
         emailAdress.should.be.a('string').to.be.equal("j.doe@server.com");
         password.should.be.a('string').to.be.equal("secret");
         phoneNumber.should.be.a('string').to.be.equal("06 12425475");
+
         done();
       });
   });
+
 });
 
 describe('TC-205 Updaten van usergegevens', () => {
+
   it('TC-205-1 Verplicht veld “emailAdress” ontbreekt', (done) => {
     chai
       .request(server)
@@ -396,8 +404,6 @@ describe('TC-205 Updaten van usergegevens', () => {
         street: "Frost",
         city: "Snowland",
         isActive: 1,
-        //Email bewust weggelaten
-        //emailAdress: "d.devries11@avans.nl",
         password: "Vriesvries2003",
         phoneNumber: "06151544554",
       })
@@ -405,8 +411,9 @@ describe('TC-205 Updaten van usergegevens', () => {
         console.log('Response body 205-1:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(400);
-        res.body.should.has.property('message')
+        res.body.should.has.property('message').that.equals('AssertionError [ERR_ASSERTION]: emailAdress must be a string');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -418,8 +425,9 @@ describe('TC-205 Updaten van usergegevens', () => {
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
-        res.body.should.has.property('message')
+        res.body.should.has.property('message').that.equals('User is not the owner of this data');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -443,13 +451,12 @@ describe('TC-205 Updaten van usergegevens', () => {
         console.log('Response body 205-3:', res.body);
         res.body.should.be.an('object');
         res.body.should.have.property('status').to.be.equal(400);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('AssertionError [ERR_ASSERTION]: Phone number is not valid');
         res.body.should.have.property('data').to.be.empty;
+
         done();
       });
   });
-
-
 
   it('TC-205-4 Gebruiker bestaat niet', (done) => {
     logger.info("Token of registered user " + token)
@@ -461,8 +468,9 @@ describe('TC-205 Updaten van usergegevens', () => {
         console.log('Response body 205-4:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User is not the owner of this data');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -474,16 +482,15 @@ describe('TC-205 Updaten van usergegevens', () => {
         console.log('Response body 205-5:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(401);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('Invalid token');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
 
-  //Niet authorized hiervoor of iets anders hiermee
   it('TC-205-6 Gebruiker succesvol gewijzigd', function (done) {
     const updatedUser = {
-      //Updating user with already existing user
       firstName: "Mariek",
       lastName: "Van D",
       isActive: 1,
@@ -504,7 +511,7 @@ describe('TC-205 Updaten van usergegevens', () => {
         console.log('Response body 205-6:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(200);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('User updated successfully');
         res.body.should.has.property('data').to.not.be.empty;
 
         const { firstName, lastName, street, city, isActive, emailAdress, phoneNumber } = res.body.data;
@@ -519,10 +526,11 @@ describe('TC-205 Updaten van usergegevens', () => {
         done();
       });
   });
+
 });
 
-
 describe('TC-206 Verwijderen van user', () => {
+
   it('TC-206-1 Gebruiker bestaat niet', (done) => {
     const nonExistantId = registeredUserId + 1;
     chai.request(server)
@@ -532,8 +540,9 @@ describe('TC-206 Verwijderen van user', () => {
         console.log('Response body 206-1:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
-        res.body.should.have.property('message').that.equals(`User is not the owner of this data`);
+        res.body.should.have.property('message').that.equals('User is not the owner of this data');
         res.body.should.have.property('data').to.be.empty;
+
         done();
       });
   });
@@ -544,8 +553,9 @@ describe('TC-206 Verwijderen van user', () => {
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(401);
-        res.body.should.have.property('message');
+        res.body.should.have.property('message').that.equals('Invalid token');
         res.body.should.have.property('data').to.be.empty;
+
         done();
       });
   });
@@ -557,8 +567,9 @@ describe('TC-206 Verwijderen van user', () => {
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
-        res.body.should.has.property('message')
+        res.body.should.has.property('message').that.equals('User is not the owner of this data')
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
@@ -574,9 +585,11 @@ describe('TC-206 Verwijderen van user', () => {
         console.log('Response body 206-4:', res.body);
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(200);
-        res.body.should.has.property('message');
+        res.body.should.has.property('message').that.equals('User deleted successfully');
         res.body.should.has.property('data').to.be.empty;
+
         done();
       });
   });
+
 });

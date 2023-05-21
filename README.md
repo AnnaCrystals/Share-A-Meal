@@ -1,59 +1,98 @@
-# Editing this README
+## Share-A-Meal-API-P4
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
 
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-
-Choose a self-explaining name for your project.
 
 ## Description
 
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Share-A-Meal-API-P4
+Is an programming assignment for semester 4 of year 1 Informatica on Avans Hogeschool.
 
-## Badges
+On this application can see, update, delete and insert users.
 
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+Those users can see, update, delete and insert meals.
+With this application you can save users and meals and see and change their data with the proper permissions like login.
 
-## Visuals
-
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
 ## Installation
 
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+1. Clone this repository to your local machine.
+2. Install the dependencies by running npm install.
+3. Set up the necessary environment variables. Refer to the .env.example file for the required variables.
+4. Start the API server by running node app.js .
+5. The API will be accessible at http://localhost:3000.
 
 ## Usage
 
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Once you have the server running locally, you can start up your webbrowser and navigate to **localhost:3000**
 
-## Support
+-Navigation towards login: **localhost:3000/api/login**
 
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+===================================================================
 
-## Roadmap
+To login it's necessary to use POSTMAN Using a POST including the emailAdress and password of the user.
 
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+===================================================================
 
-## Contributing
+-Navigation towards creating an user: **localhost:3000/api/user**
 
-State if you are open to contributions and what your requirements are for accepting them.
+-Navigation towards all users: **localhost:3000/api/user**
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+-Navigation towards user profile: **localhost:3000/api/user/profile**
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+-Navigation towards specific user: **localhost:3000/api/user/1**
+
+-Navigation towards delete, update user: **localhost:3000/api/user/1**
+
+===================================================================
+
+To create an user it's necessary to use POSTMAN.
+-Send a POST for the user
+
+To see all the users it's not necessary to use POSTMAN but you can use it.
+-Send a GET for all the users
+
+To see the user profile it's necessary to be logged in nad use POSTMAN and be the user.
+-Send a GET for your profile
+
+To get an specific user it's necessary to be logged in and use POSTMAN and be the user.
+-Send a GET for the user
+
+To update or delete an user it's necessary to be logged in and use POSTMAN and be the user.
+-Send a PUT for update
+-Send a DELETE for delete
+
+===================================================================
+
+-Navigation towards creating a meal: **localhost:3000/api/meal**
+
+-Navigation towards delete, update meal: **localhost:3000/api/meal/1**
+
+-Navigation towards all meals: **localhost:3000/api/meal**
+
+-Navigation towards specific meal: **localhost:3000/api/meal/1**
+
+===================================================================
+
+To create an meal it's necessary to be logged in and use POSTMAN.
+-Send a POST to create an meal
+
+To update, delete an meal it's necessary to be logged in and use POSTMAN and be the cook(user).
+-Send a PUT for update
+-Send a DELETE for delete
+
+To see all the meals it's not necessary to use POSTMAN but you can use it.
+-Send a GET for all the meals
+
+To see a specific meal it's not necessary to use POSTMAN but you can use it.
+-Send a GET for a specific meal
+
+===================================================================
 
 ## Authors and acknowledgment
 
-Show your appreciation to those who have contributed to the project.
+Daan de Vries - 2205132
 
-## License
-
-For open source projects, say how it is licensed.
 
 ## Project status
 
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Project is on hold since 21/05/2023

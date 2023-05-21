@@ -1,6 +1,3 @@
-//
-// Authentication controller
-//
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
 const pool = require('../util/mysql-db');
@@ -12,7 +9,6 @@ module.exports = {
         const { emailAdress, password } = req.body;
         if (!emailAdress || !password) {
             next({
-                //Code was eerst 404
                 code: 400,
                 message: 'Verplicht veld ontbreekt',
             });
@@ -43,7 +39,7 @@ module.exports = {
 
                         if (results[0]) {
                             if (results[0].password === password) {
-                                const payload = { id: results[0].id }; // Update this line
+                                const payload = { id: results[0].id }; 
 
                                 jwt.sign(
                                     payload,
@@ -52,11 +48,11 @@ module.exports = {
                                     (err, token) => {
                                         if (err) {
                                             next({
-                                                code: 500,
+                                                status: 500,
                                                 message: 'Error generating token',
                                             });
                                         } else {
-                                            console.log('Generated Token - Payload:', payload); // Update this line
+                                            console.log('Generated Token - Payload:', payload); 
                                             res.status(200).json({
                                                 code: 200,
                                                 message: 'User has logged in',
@@ -122,18 +118,17 @@ module.exports = {
                 return;
             }
 
-            console.log('Token Payload:', decoded); // Add this line
-            req.userId = decoded.id; // Update this line
+            console.log('Token Payload:', decoded); 
+            req.userId = decoded.id; 
             next();
         });
     },
 
     validateEmail(req, res, next) {
-        // Check if the email is valid
+
         const emailRegex = /^[a-z]\.[a-z]+@avans\.nl$/;
         const isValidEmail = emailRegex.test(req.body.emailAdress);
 
-        // If the email is not valid, return a 400 Bad Request response
         if (!isValidEmail) {
             return res.status(400).json({
                 error: 'Invalid email adress.',
@@ -141,19 +136,15 @@ module.exports = {
             });
         }
 
-        // If the email is valid, continue to the next middleware or route handler
         next();
     },
 
     validatePassword(req, res, next) {
-        // Check if the password is valid
         const password = req.body.password;
 
-        // Password must match the regex pattern
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         const isValidPassword = passwordRegex.test(password);
 
-        // If the password is not valid, return a 400 Bad Request response
         if (!isValidPassword) {
             return res.status(400).json({
                 error: 'Invalid password. Password should be at least 8 characters long, contain at least 1 number, and at least 1 uppercase letter.',
@@ -161,7 +152,6 @@ module.exports = {
             });
         }
 
-        // If the password is valid, continue to the next middleware or route handler
         next();
     },
 };

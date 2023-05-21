@@ -1,4 +1,3 @@
-//const database = require('../util/inmemory')
 const logger = require('../util/utils').logger;
 const assert = require('assert');
 const pool = require('../util/mysql-db');
@@ -8,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const userController = {
     getUsers: function (req, res, next) {
         console.log("Executing getUsers function");
-        const filter = req.query.fakeFilter; // Assuming 'fakeFilter' is the parameter name
+        const filter = req.query.fakeFilter; 
         const isActive = req.query.isActive;
         const password = req.query.password;
 
@@ -34,7 +33,7 @@ const userController = {
                 }
 
                 if (filter && filter !== 'fake') {
-                    query += ` AND columnName = '${filter}'`; // Replace 'columnName' with the actual column name in your table
+                    query += ` AND columnName = '${filter}'`; 
                 }
 
                 if (password === 'secret') {
@@ -68,7 +67,6 @@ const userController = {
                         res.status(200).json(responseData);
                     }
 
-                    // Release the connection back to the pool
                     conn.release();
                 });
             }
@@ -82,7 +80,6 @@ const userController = {
             assert(typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'string', 'street must be a string');
             assert(typeof city === 'string', 'city must be a string');
-            //assert(typeof isActive === 'integer', 'isActive must be a integer');
             assert(typeof emailAdress === 'string', 'emailAdress must be a string');
             assert(typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'string', 'phoneNumber must be a string');
@@ -167,7 +164,6 @@ const userController = {
 
         console.log('UserID:', userId);
         pool.getConnection(function (err, conn) {
-            // Do something with the connection
             if (err) {
                 logger.error(err.code, err.syscall, err.address, err.port);
                 next({
@@ -264,7 +260,6 @@ const userController = {
             assert(typeof lastName === 'undefined' || typeof lastName === 'string', 'lastName must be a string');
             assert(typeof street === 'undefined' || typeof street === 'string', 'street must be a string');
             assert(typeof city === 'undefined' || typeof city === 'string', 'city must be a string');
-            //assert(typeof isActive === 'undefined' || typeof isActive === 'integer', 'isActive must be a integer');
             assert(typeof emailAdress === 'undefined' || typeof emailAdress === 'string', 'emailAdress must be a string');
             assert(typeof password === 'undefined' || typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'undefined' || typeof phoneNumber === 'string', 'phoneNumber must be a string');
@@ -276,13 +271,9 @@ const userController = {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
                     console.log(err);
-                    // next({
-                    //     status: 500,
-                    //     message: "Internal Server Error"
-                    // });
                     res.status(500).json({
                         status: 500,
-                        message: "Jouw message",
+                        message: "Failed to establish a database connection",
                         data: { error: err }
                     })
                 }
@@ -291,13 +282,9 @@ const userController = {
                     pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
                         if (err) {
                             console.log("Error retrieving user");
-                            // next({
-                            //     status: 500,
-                            //     message: "Internal Server Error"
-                            // });
                             res.status(500).json({
                                 status: 500,
-                                message: "Jouw message",
+                                message: "Error retrieving user",
                                 data: { error: err }
                             })
 
@@ -352,71 +339,6 @@ const userController = {
         }
     },
 
-    // userDelete: function (req, res, next) {
-    //     const { userId } = req.params;
-
-    //     if (userId != req.userId) {
-    //         res.status(403).json({
-    //             status: 403,
-    //             message: "User is not the owner of this data",
-    //             data: {}
-    //         })
-    //     }
-
-    //     try {
-    //         pool.getConnection(function (err, conn) {
-    //             if (err) {
-    //                 console.log("Error: Failed to establish a database connection");
-    //                 next({
-    //                     status: 500,
-    //                     message: "Can't connect"
-    //                 });
-    //             }
-    //             if (conn) {
-    //                 pool.query('SELECT * FROM user WHERE id = ?', [userId], (err, results) => {
-    //                     if (err) {
-    //                         console.log("Error retrieving user", err);
-    //                         next({
-    //                             status: 500,
-    //                             message: "Can't query select"
-    //                         });
-    //                     } else if (results.length === 0) {
-    //                         console.log("User not found");
-    //                         res.status(404).json({
-    //                             status: 404,
-    //                             message: `User met ID ${userId} niet gevonden`,
-    //                             data: {},
-    //                         });
-    //                     } else if (results.length === 1) {
-    //                         conn.query('DELETE FROM user WHERE id = ?', [userId], (err) => {
-    //                             if (err) {
-    //                                 console.log("Error deleting user", err);
-    //                                 next({
-    //                                     status: 500,
-    //                                     message: "Can't query delete"
-    //                                 });
-    //                             } else {
-    //                                 // User deleted successfully
-    //                                 res.status(200).json({
-    //                                     status: 200,
-    //                                     message: "User deleted successfully",
-    //                                     data: {},
-    //                                 });
-    //                             }
-    //                             pool.releaseConnection(conn);
-    //                         });
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     } catch (err) {
-    //         res.status(400).json({
-    //             status: 400,
-    //             message: err.toString(),
-    //             data: {},
-    //         });
-    //     }
-    // }
     userDelete: function (req, res, next) {
         const { userId } = req.params;
 
@@ -464,7 +386,6 @@ const userController = {
                         });
                     }
 
-                    // User deleted successfully
                     res.status(200).json({
                         status: 200,
                         message: "User deleted successfully",
@@ -475,7 +396,7 @@ const userController = {
                 });
             });
         });
-    }
+    },
 };
 
 module.exports = userController

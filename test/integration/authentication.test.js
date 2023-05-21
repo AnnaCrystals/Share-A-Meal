@@ -45,6 +45,7 @@ const INSERT_MEALS =
 
 describe('TC-10x - Login', () => {
   describe('TC-101 - Inloggen', (done) => {
+
     it('TC-101-1 Verplicht veld ontbreekt', (done) => {
       chai.request(server)
         .post('/api/login')
@@ -53,11 +54,14 @@ describe('TC-10x - Login', () => {
         })
         .end((err, res) => {
           console.log('Response body 101-1:', res.body);
+          res.body.should.be.an('object')
           res.body.should.have.status(400)
+          res.body.should.have.property('message').that.equals('Verplicht veld ontbreekt')
           res.body.should.have.property('data').to.be.empty
           done();
         });
     });
+
     it('TC-101-2 Niet-valide wachtwoord', (done) => {
       chai.request(server)
         .post('/api/login')
@@ -67,26 +71,31 @@ describe('TC-10x - Login', () => {
         })
         .end((err, res) => {
           console.log('Response body 101-2:', res.body);
+          res.body.should.be.an('object')
           res.body.should.have.status(400)
-          res.body.should.have.property('message').to.be.equal("Email adress and password do not match")
-          done();
-        });
-    });
-    it('TC-101-3 Gebruiker bestaat niet', (done) => {
-      chai.request(server)
-        .post('/api/login')
-        .send({
-          emailAdress: "k.morrororoij@server.com",
-          password: "secret"
-        })
-        .end((err, res) => {
-          console.log('Response body 101-3:', res.body);
-          res.body.should.have.status(404)
-          res.body.should.have.property('message')
+          res.body.should.have.property('message').that.equals('Email adress and password do not match')
           res.body.should.have.property('data').to.be.empty
           done();
         });
     });
+
+    it('TC-101-3 Gebruiker bestaat niet', (done) => {
+      chai.request(server)
+        .post('/api/login')
+        .send({
+          emailAdress: "m.father@server.com",
+          password: "secret"
+        })
+        .end((err, res) => {
+          console.log('Response body 101-3:', res.body);
+          res.body.should.be.an('object')
+          res.body.should.have.status(404)
+          res.body.should.have.property('message').that.equals('User with emailAdress m.father@server.com cannot be found')
+          res.body.should.have.property('data').to.be.empty
+          done();
+        });
+    });
+
     it('TC-101-4 Gebruiker succesvol ingelogd', (done) => {
       chai.request(server)
         .post('/api/login')
@@ -96,9 +105,10 @@ describe('TC-10x - Login', () => {
         })
         .end((err, res) => {
           console.log('Response body 101-4:', res.body);
+          res.body.should.be.an('object')
           res.body.should.have.property('code', 200); // Updated assertion
-          res.body.should.have.property('message');
-          res.body.should.have.property('data');
+          res.body.should.have.property('message').that.equals('User has logged in');
+          res.body.should.have.property('data').to.not.be.empty;
           const data = res.body.data;
           data.should.have.property('id').to.be.equal(1);
           data.should.have.property('token');
@@ -106,5 +116,6 @@ describe('TC-10x - Login', () => {
           done();
         });
     });
+
   });
 });

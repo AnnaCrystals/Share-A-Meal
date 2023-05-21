@@ -1,4 +1,3 @@
-//const database = require('../util/inmemory')
 const logger = require('../util/utils').logger;
 const assert = require('assert');
 const pool = require('../util/mysql-db');
@@ -11,7 +10,6 @@ const mealController = {
     getMeals: function (req, res, next) {
 
         pool.getConnection(function (err, conn) {
-            // Do something with the connection
 
             if (err) {
                 console.log("Error");
@@ -38,6 +36,7 @@ const mealController = {
         });
 
     },
+    
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
@@ -137,55 +136,8 @@ const mealController = {
             });
         }
     },
+
     getMealWithId: function (req, res, next) {
-        //     const mealId = parseInt(req.params.mealId);
-        //     //const userId = req.params.userId;
-
-        //     try {
-        //         pool.getConnection(function (err, conn) {
-        //             if (err) {
-        //                 console.log("Error: Failed to establish a database connection");
-        //                 next({
-        //                     code: 500,
-        //                     message: "Internal Server Error"
-        //                 });
-        //             }
-
-        //             if (conn) {
-        //                 pool.query('SELECT * FROM meal WHERE id = ?', [mealId], (err, results) => {
-        //                     if (err) {
-        //                         console.log("Error retrieving meal");
-        //                         next({
-        //                             code: 500,
-        //                             message: "Internal Server Error"
-        //                         });
-        //                     } else if (results.length === 0) {
-        //                         console.log("Meal not found");
-        //                         res.status(404).json({
-        //                             status: 404,
-        //                             message: `Meal met ID ${mealId} niet gevonden`,
-        //                             data: {},
-        //                         });
-        //                     } else {
-        //                         const meal = results[0];
-
-        //                         res.status(200).json({
-        //                             status: 200,
-        //                             message: `Meal met ID ${mealId} is gevonden`,
-        //                             data: meal,
-        //                         });
-        //                     } pool.releaseConnection(conn);
-        //                 });
-        //             }
-        //         });
-        //     } catch (err) {
-        //         res.status(400).json({
-        //             status: 400,
-        //             message: err.toString(),
-        //             data: {},
-        //         })
-        //     }
-        // },
         console.log(req.params);
         const mealId = parseInt(req.params.mealId);
 
@@ -204,7 +156,6 @@ const mealController = {
                 return next('error: ' + err.message);
             }
 
-            // Rest of the code remains unchanged...
             if (conn) {
                 conn.query(`SELECT * FROM \`meal\` WHERE \`id\`=${mealId}`, function (err, results, fields) {
                     if (err) {
@@ -241,8 +192,8 @@ const mealController = {
             }
         });
     },
+
     mealUpdate: function (req, res, next) {
-        //const { userId } = req.params;
         const mealId = parseInt(req.params.mealId);
         const { isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, createDate, updateDate, name, description, allergenes } = { ...req.body, cookId: req.user.id };
         try {
@@ -335,67 +286,11 @@ const mealController = {
             });
         }
     },
+
     mealDelete: function (req, res, next) {
-        //     const mealId = parseInt(req.params.mealId);
-        //     //const { userId } = req.params;
-        //     try {
-        //         pool.getConnection(function (err, conn) {
-        //             if (err) {
-        //                 console.log("Error: Failed to establish a database connection");
-        //                 next({
-        //                     code: 500,
-        //                     message: "Can't connect"
-        //                 });
-        //             }
-        //             if (conn) {
-        //                 pool.query('SELECT * FROM meal WHERE id = ?', [mealId], (err, results) => {
-        //                     if (err) {
-        //                         console.log("Error retrieving meal", err);
-        //                         next({
-        //                             code: 500,
-        //                             message: "Can't query select"
-        //                         });
-        //                     } else if (results.length === 0) {
-        //                         console.log("Meal not found");
-        //                         res.status(404).json({
-        //                             status: 404,
-        //                             message: `Meal met ID ${mealId} niet gevonden`,
-        //                             data: {},
-        //                         });
-        //                     } else if (results.length === 1) {
-        //                         conn.query('DELETE FROM meal WHERE id = ?', [mealId], (err) => {
-        //                             if (err) {
-        //                                 console.log("Error deleting meal", err);
-        //                                 next({
-        //                                     code: 500,
-        //                                     message: "Can't query delete"
-        //                                 });
-        //                             } else {
-        //                                 // Meal deleted successfully
-        //                                 res.status(200).json({
-        //                                     status: 200,
-        //                                     message: "Meal deleted successfully",
-        //                                     data: {},
-        //                                 });
-        //                             }
-        //                             pool.releaseConnection(conn);
-        //                         });
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     } catch (err) {
-        //         res.status(400).json({
-        //             status: 400,
-        //             message: err.toString(),
-        //             data: {},
-        //         });
-        //     }
-        // } const mealId = parseInt(req.params.mealid);
         const mealId = parseInt(req.params.mealId);
-        //SELECT MEAL SQL
         const selectMealSql = `SELECT cookId FROM \`meal\` WHERE \`id\` = ${mealId}`;
-        //CONNECTION
+ 
         pool.getConnection(function (err, conn) {
             if (err) {
                 console.log('error', err);
@@ -422,7 +317,6 @@ const mealController = {
 
                     const cookId = results[0].cookId;
 
-                    // VERIFY OWNER
                     if (cookId != req.userId) {
                         res.status(403).json({
                             status: 403,
@@ -432,7 +326,6 @@ const mealController = {
                         return;
                     }
 
-                    //DELETE MEAL SQL
                     const deleteMealSql = `DELETE FROM \`meal\` WHERE \`id\` = ${mealId}`;
 
                     conn.query(deleteMealSql, function (err, results, fields) {
@@ -453,7 +346,7 @@ const mealController = {
                 });
             }
         });
-    }
+    },
 };
 
 module.exports = mealController
