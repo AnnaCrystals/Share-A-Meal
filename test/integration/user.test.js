@@ -126,14 +126,14 @@ describe('TC-201 Registreren als nieuwe user', () => {
       .post('/api/user')
       .set("Authorization", `Bearer ${token}`)
       .send({
-        firstName: 'Marieke',
-        lastName: 'Van Dam',
+        firstName: 'Henk',
+        lastName: 'Tank',
         street: '',
         city: '',
-        isActive: 0,
-        emailAdress: 'm.vandam@avans.nl',
-        password: '1Vandammarieke',
-        phoneNumber: '06-12345678'
+        isActive: 1,
+        emailAdress: 'h.tank@server.com',
+        password: '1Henktank',
+        phoneNumber: '06 12425495'
       })
       .end((err, res) => {
         console.log('Response body 201-4:', res.body);
