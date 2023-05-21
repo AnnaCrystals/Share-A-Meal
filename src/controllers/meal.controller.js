@@ -44,7 +44,7 @@ const mealController = {
         
         //let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
         //let dateTime = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-        let dateTime = moment().utc().format("YYYY-MM-DD HH:mm:ss");
+        let dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
 
         const newMeal = {
             isActive,
