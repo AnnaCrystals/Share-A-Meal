@@ -130,6 +130,7 @@ INSERT INTO `user` VALUES
 (3,'Herman','Huizinga',1,'h.huizinga@server.nl','secret','06-12345678','editor,guest','',''),
 (4,'Marieke','Van Dam',0,'m.vandam@server.nl','secret','06-12345678','editor,guest','',''),
 (5,'Henk','Tank',1,'h.tank@server.com','secret','06 12425495','editor,guest','','');
+(720,'Marieke','Van Dam',0,'m.vandam@avans.nl','1Vandammarieke','06-12345678','editor,guest','','');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
