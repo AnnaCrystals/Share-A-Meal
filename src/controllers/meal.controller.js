@@ -40,11 +40,7 @@ const mealController = {
     createMeal: function (req, res, next) {
         console.log('Creating a meal');
 
-         //let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
-        let date = new Date();
-        let formattedDateTime = date.toISOString();
-        let dateTime = formattedDateTime.replace('T', ' ').replace('Z', '');
-        console.log(dateTime);
+        let dateTime = DATE_FORMATER(new Date(), "yyyy-mm-dd HH:MM:ss");
 
         const newMeal = {
             isActive,
@@ -116,7 +112,7 @@ const mealController = {
                                     isVega,
                                     isVegan,
                                     isToTakeHome,
-                                    dateTime: formattedDateTime,
+                                    dateTime,
                                     maxAmountOfParticipants,
                                     price,
                                     imageUrl,
