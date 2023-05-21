@@ -28,7 +28,7 @@ CREATE TABLE `meal` (
   `isVega` tinyint NOT NULL DEFAULT '0',
   `isVegan` tinyint NOT NULL DEFAULT '0',
   `isToTakeHome` tinyint NOT NULL DEFAULT '1',
-  `dateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `dateTime` datetime(6) NOT NULL DEFAULT CONVERT_TZ('2022-05-22 13:35:00.000', '+00:00', @@session.time_zone),
   `maxAmountOfParticipants` int NOT NULL DEFAULT '6',
   `price` decimal(5,2) NOT NULL,
   `imageUrl` varchar(255) NOT NULL,
