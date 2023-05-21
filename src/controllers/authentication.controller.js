@@ -12,7 +12,8 @@ module.exports = {
         const { emailAdress, password } = req.body;
         if (!emailAdress || !password) {
             next({
-                code: 404,
+                //Code was eerst 404
+                code: 400,
                 message: 'Verplicht veld ontbreekt',
             });
             return;

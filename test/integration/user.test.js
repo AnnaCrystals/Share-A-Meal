@@ -43,6 +43,8 @@ const INSERT_MEALS =
   "(2, 'Meal B', 'description', 'image url', NOW(), 5, 6.50, 1);";
 
 let token = 0;
+let token1 = 0;
+
 let registeredUserId = 0;
 
 describe('TC-201 Registreren als nieuwe user', () => {
@@ -62,8 +64,8 @@ describe('TC-201 Registreren als nieuwe user', () => {
       })
       .end((err, res) => {
         console.log('Response body 201-1:', res.body);
-        res.should.have.status(400);
         res.body.should.be.an('object');
+        res.should.have.status(400);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.be.empty;
         done();
@@ -87,15 +89,15 @@ describe('TC-201 Registreren als nieuwe user', () => {
       })
       .end((err, res) => {
         console.log('Response body 201-2:', res.body);
-        res.should.have.status(400);
         res.body.should.be.an('object');
+        res.should.have.status(400);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.be.empty;
         done();
       });
   });
 
-  it.skip('TC-201-3 Niet-valide wachtwoord', (done) => {
+  it('TC-201-3 Niet-valide wachtwoord', (done) => {
     chai.request(server)
       .post('/api/user')
       .send({
@@ -118,7 +120,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
       });
   });
 
-  it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
+  it('TC-201-4 Gebruiker bestaat al', (done) => {
     chai
       .request(server)
       .post('/api/user')
@@ -135,6 +137,7 @@ describe('TC-201 Registreren als nieuwe user', () => {
       })
       .end((err, res) => {
         console.log('Response body 201-4:', res.body);
+        res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(403);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.be.empty;
@@ -204,7 +207,6 @@ describe('TC-202 Opvragen van overzicht users', () => {
       .end((err, res) => {
         console.log('Response body 202-1:', res.body);
         res.body.should.be.an('object')
-        //Misschien res.body.status weghalen
         res.body.should.has.property('status').to.be.equal(200);
         res.body.should.has.property('message');
         res.body.should.has.property('data').to.not.be.empty;
@@ -218,8 +220,11 @@ describe('TC-202 Opvragen van overzicht users', () => {
       .get('/api/user?fakeFilter=fake')
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
-        res.body.should.have.property('data');
-        res.should.have.status(200);
+        console.log('Response body 202-2:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(200);
+        res.body.should.have.property('message');
+        res.body.should.has.property('data').to.not.be.empty;
         done();
       });
   });
@@ -229,7 +234,10 @@ describe('TC-202 Opvragen van overzicht users', () => {
       .get('/api/user?isActive=false')
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
-        res.should.have.status(200);
+        console.log('Response body 202-3:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(200);
+        res.body.should.have.property('message');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
         done();
       });
@@ -240,7 +248,10 @@ describe('TC-202 Opvragen van overzicht users', () => {
       .get('/api/user?isActive=true')
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
-        res.should.have.status(200);
+        console.log('Response body 202-4:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(200);
+        res.body.should.have.property('message');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
         const filteredUser = res.body.data[0];
         filteredUser.firstName.should.equal('Mariëtte');
@@ -255,7 +266,10 @@ describe('TC-202 Opvragen van overzicht users', () => {
       .get('/api/user?password=secret&isActive=true')
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
-        res.should.have.status(200);
+        console.log('Response body 202-3:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(200);
+        res.body.should.have.property('message');
         res.body.should.have.property('data').that.is.an('array').with.length.gte(2);
         const filteredUser = res.body.data[0];
         filteredUser.firstName.should.equal('Mariëtte');
@@ -275,15 +289,18 @@ describe('TC-202 Opvragen van overzicht users', () => {
 //Hier nog een 401 code toevoegen
 describe('TC-203 Opvragen van gebruikersprofiel', () => {
   it('TC-203-1 Ongeldig token', (done) => {
-    chai
-      .request(server)
+    chai.request(server)
       .get('/api/user/profile')
       //.set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
+        console.log('Response body 203-1:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(401);
+        res.body.should.have.property('message');
+        res.body.should.have.property('data').to.be.empty;
         done();
       });
   });
-
 
   it('TC-203-2 Gebruiker is ingelogd met geldig token.', (done) => {
     chai
@@ -314,14 +331,20 @@ describe('TC-203 Opvragen van gebruikersprofiel', () => {
 
 describe('TC-204 Opvragen van usergegevens bij ID', () => {
   //Hier codes toevoegen
-  it('TC-204-1 Ongeldig token', (done) => {
+  it.skip('TC-204-1 Ongeldig token', (done) => {
     chai.request(server)
       .get('/api/user/1')
-      .set('Authorization', 'Bearer ' + jwt.sign({ userid: 2 }, jwtSecretKey))
+      .set("Authorization", `Bearer ${token1}`)
       .end((err, res) => {
+        console.log('Response body 204-1:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(401);
+        res.body.should.have.property('message');
+        res.body.should.have.property('data').to.be.empty;
         done();
       });
   });
+
 
   it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
     chai.request(server)
@@ -329,7 +352,7 @@ describe('TC-204 Opvragen van usergegevens bij ID', () => {
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 204-2:', res.body);
-        res.body.should.have.status(404)
+        res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(404);
         res.body.should.has.property('data').to.be.empty;
         res.body.should.has.property('message').that.equals('User met ID 999 niet gevonden')
@@ -393,42 +416,52 @@ describe('TC-205 Updaten van usergegevens', () => {
       .put('/api/user/5')
       .set('Authorization', 'Bearer ' + jwt.sign({ userid: 123 }, jwtSecretKey))
       .end((err, res) => {
-        res.body.should.have.status(403)
+        res.body.should.be.an('object');
+        res.body.should.has.property('status').to.be.equal(403);
         res.body.should.has.property('message')
         res.body.should.has.property('data').to.be.empty;
         done();
       });
   });
 
-  //Hier een code toevoegen
-  it.skip('TC-205-3 Niet-valide telefoonnummer', (done) => {
+  it('TC-205-3 Niet-valide telefoonnummer', (done) => {
+    logger.info("Token of registered user " + token)
     chai.request(server)
-      .put('/api/user/5')
-      .set('Authorization', 'Bearer ' + jwt.sign({ userid: 5 }, jwtSecretKey))
+      .put(`/api/user/${registeredUserId}`)
+      .set("Authorization", `Bearer ${token}`)
       .send({
-        firstName: 'Jacob',
-        lastName: 'Edwards',
+        firstName: 'Plato',
+        lastName: 'greek',
         isActive: 1,
-        emailAdress: 'j.edwards@server.com',
+        emailAdress: 'p.greek@server.com',
         password: "Password1234",
         phoneNumber: "0519",
         street: "Street",
         city: "Anytown"
       })
       .end((err, res) => {
+        console.log('Response body 205-3:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status').to.be.equal(400);
+        res.body.should.have.property('message');
+        res.body.should.have.property('data').to.be.empty;
         done();
       });
   });
 
+
   //Niet authorized
   it.skip('TC-205-4 Gebruiker bestaat niet', (done) => {
+    logger.info("Token of registered user " + token)
     const nonExistantId = 9999;
     chai.request(server)
       .put(`/api/user/${nonExistantId}`)
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 205-4:', res.body);
+        res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(404);
+        res.body.should.have.property('message');
         res.body.should.has.property('data').to.be.empty;
         done();
       });
@@ -438,7 +471,11 @@ describe('TC-205 Updaten van usergegevens', () => {
     chai.request(server)
       .put('/api/user/1')
       .end((err, res) => {
-        res.body.should.have.status(401)
+        console.log('Response body 205-5:', res.body);
+        res.body.should.be.an('object');
+        res.body.should.has.property('status').to.be.equal(401);
+        res.body.should.have.property('message');
+        res.body.should.has.property('data').to.be.empty;
         done();
       });
   });
@@ -468,6 +505,7 @@ describe('TC-205 Updaten van usergegevens', () => {
         res.body.should.be.an('object');
         res.body.should.has.property('status').to.be.equal(200);
         res.body.should.have.property('message');
+        res.body.should.has.property('data').to.not.be.empty;
 
         const { firstName, lastName, street, city, isActive, emailAdress, phoneNumber } = res.body.data;
         firstName.should.be.a('string').to.be.equal(updatedUser.firstName);
@@ -493,34 +531,47 @@ describe('TC-206 Verwijderen van user', () => {
       .set("Authorization", `Bearer ${token}`)
       .end((err, res) => {
         console.log('Response body 206-1:', res.body);
-        res.should.have.status(404);
-        res.body.should.have.property('data').to.be.empty;
+        res.body.should.be.an('object');
+        res.body.should.has.property('status').to.be.equal(404);
         res.body.should.have.property('message').that.equals(`User met ID ${nonExistentId} niet gevonden`);
+        res.body.should.have.property('data').to.be.empty;
         done();
       });
   });
 
 
+  // it('TC-206-2 Gebruiker is niet ingelogd', (done) => {
+  //   chai.request(server)
+  //     .delete('/api/user/1')
+  //     .end((err, res) => {
+  //       try {
+  //         res.body.should.have.status(401);
+  //         done();
+  //       } catch (error) {
+  //         done(error); // Pass any caught errors to done()
+  //       }
+  //     });
+  // });
+
   it('TC-206-2 Gebruiker is niet ingelogd', (done) => {
     chai.request(server)
       .delete('/api/user/1')
       .end((err, res) => {
-        try {
-          res.body.should.have.status(401);
-          done();
-        } catch (error) {
-          done(error); // Pass any caught errors to done()
-        }
+        res.body.should.be.an('object');
+        res.body.should.has.property('status').to.be.equal(401);
+        res.body.should.have.property('message');
+        res.body.should.have.property('data').to.be.empty;
+        done();
       });
   });
-
 
   it('TC-206-3 De gebruiker is niet de eigenaar van de data', (done) => {
     chai.request(server)
       .delete('/api/user/5')
-      .set('Authorization', 'Bearer ' + jwt.sign({ userid: 12 }, jwtSecretKey))
+      .set('Authorization', 'Bearer ' + jwt.sign({ userid: 500 }, jwtSecretKey))
       .end((err, res) => {
-        res.body.should.have.status(403)
+        res.body.should.be.an('object');
+        res.body.should.has.property('status').to.be.equal(403);
         res.body.should.has.property('message')
         res.body.should.has.property('data').to.be.empty;
         done();

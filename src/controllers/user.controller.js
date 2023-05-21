@@ -255,6 +255,9 @@ const userController = {
             assert(typeof password === 'undefined' || typeof password === 'string', 'password must be a string');
             assert(typeof phoneNumber === 'undefined' || typeof phoneNumber === 'string', 'phoneNumber must be a string');
 
+            const phoneRegex = /^06[-\s]?\d{8}$/;
+            assert(phoneRegex.test(phoneNumber), 'Phone number is not valid');
+
             pool.getConnection(function (err, conn) {
                 if (err) {
                     console.log("Error: Failed to establish a database connection");
@@ -283,6 +286,8 @@ const userController = {
                                 message: "Jouw message",
                                 data: { error: err }
                             })
+
+
                         } else if (results.affectedRows === 0) {
                             console.log("User not found");
                             return res.status(404).json({
@@ -290,6 +295,7 @@ const userController = {
                                 message: `User with ID ${userId} not found`,
                                 data: {},
                             });
+
                         } else if (results.length === 1) {
                             const user = results[0];
                             user.firstName = firstName || user.firstName;

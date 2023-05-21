@@ -15,7 +15,7 @@ router.get('', userController.getUsers)
 router.get('/profile', authenticationController.validateToken, userController.getUserProfile)
 
 //UC-204 Opvragen van usergegevens bij ID
-router.get('/:userId', userController.getUserWithId)
+router.get('/:userId', authenticationController.validateToken, userController.getUserWithId)
 
 //UC-205 Wijzigen van usergegeven
 router.put('/:userId', authenticationController.validateToken, userController.userUpdate)
